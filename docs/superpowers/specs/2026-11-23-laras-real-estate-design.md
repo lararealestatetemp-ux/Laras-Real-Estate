@@ -21,6 +21,7 @@ Reproduce the approved mockup **direction** (structure, hierarchy, professionali
 | Form delivery | Email only for now; storage later |
 | Lead inbox | Env var `LEAD_INBOX_EMAIL` (unconfigured until set) |
 | Property content at launch | Development fixtures with mock images, clearly labeled as placeholders |
+| Click-budget UX | Max 2 clicks from Home to any primary task form; property inquiry uses card CTA + on-page detail form (option C) |
 
 ## 3. Architecture
 
@@ -68,7 +69,39 @@ Avoid: dense dashboards, excessive animation, small controls, hidden nav, comple
 
 Motion: minimal; honor `prefers-reduced-motion`.
 
-## 5. Known vs unknown business content
+## 5. Click-budget UX (older-visitor priority)
+
+Primary tasks must be reachable with as few clicks as possible. **Do not count** typing into form fields. Count only navigation clicks to reach the place where the task can be completed (form visible or phone CTA usable).
+
+### Rule
+
+- **Maximum 2 clicks from Home** to any primary task form.
+- **Header phone CTA** (`tel:936-208-3019`) remains visible on every page so calling is always available without hunting.
+- Prefer **forms on the destination page** over forcing a hop to `/contact` when the user already has context (especially a specific property).
+- Prefer large, clearly labeled buttons over icon-only actions.
+- Keep primary task CTAs visible without relying on tiny or hidden controls.
+
+### Target click budgets
+
+| Goal | Target path | Max clicks from Home |
+|---|---|---|
+| Ask about a specific property | Properties → property (inquiry form on detail) **or** Properties → Ask About This Property on card | **2** |
+| General question | Contact | **1** |
+| Remodeling consultation | Remodeling (form on page) | **1** (+ scroll if needed) |
+| Sell / cash-offer request | Sell (form on page) | **1** |
+| Financing information / inquire | Financing (inquire CTA or short form on page) | **1–2** |
+| Browse listings | Properties | **1** |
+| Call the business | Header phone CTA | **1** (or 0 if using click-to-call awareness on landing) |
+
+### Property inquiry (option C — locked)
+
+1. **On each property card** (`/properties`): a clear **Ask About This Property** (or equivalent) control that goes straight to that property’s detail page anchored to the inquiry form (or opens the inquiry path with property context). This keeps “I already know I want to ask” at **2 clicks** and does not require reading the full detail first.
+2. **On the property detail page**: an **on-page inquiry form** (not only a link to `/contact`) so “Contact About This Property” is completed without a third navigation hop. Prefill/associate internal lead context with the property slug/title server-side; do not put PII in the URL.
+3. Retain a secondary text link to general Contact if useful, but the primary path must not depend on it.
+
+Lead type for property-specific questions: `PROPERTY_BUYER` (internal).
+
+## 6. Known vs unknown business content
 
 ### KNOWN (may display as facts)
 
@@ -92,7 +125,7 @@ Motion: minimal; honor `prefers-reduced-motion`.
 
 Development placeholders must be clearly labeled and easy to replace.
 
-## 6. Pages
+## 7. Pages
 
 ### Home `/`
 
@@ -117,7 +150,10 @@ No fabricated claims (“number one,” “trusted by thousands,” etc.).
 - Hero + short description
 - Simple filters: All | Houses | Land | Commercial
 - Grid of property cards from fixtures, or clear empty state
-- Card may show only available fields: image, title, price, type, location, attributes, owner-financing badge, View Details
+- Card may show only available fields: image, title, price, type, location, attributes, owner-financing badge
+- Card actions (both required for click-budget option C):
+  - **View Details** → property detail page
+  - **Ask About This Property** → property detail page inquiry section (hash/anchor to on-page form), with property context preserved without putting PII in the URL
 - Omit missing fields cleanly; do not invent values
 
 ### Property details `/properties/[slug]`
@@ -125,8 +161,9 @@ No fabricated claims (“number one,” “trusted by thousands,” etc.).
 1. Image gallery (no auto-advance; keyboard/touch friendly)
 2. Title, price, financing indicator if applicable
 3. Core facts, approved location, description, features
-4. Contact About This Property CTA
+4. **On-page property inquiry form** (primary path for questions; lead type `PROPERTY_BUYER`; associate property slug/title server-side). Do not require navigating to `/contact` to ask about this property.
 5. Apply for Financing CTA **only** when `ownerFinancingAvailable` is true (routes to `/financing`; no external URL supplied)
+6. Optional secondary link to general Contact for non-property questions
 
 Invalid/unavailable slug → not-found response.
 
@@ -141,7 +178,7 @@ Invalid/unavailable slug → not-found response.
 
 - Hero + short factual explanation that financing may be available for selected properties/projects
 - Owner-financing / selective-project sections in plain language only
-- Contact/inquire CTA
+- Prefer an **on-page inquire path** (short form or clear Contact CTA that still meets the ≤2 click budget from Home)
 - **Never** invent rates, APR, terms, credit scores, payments, eligibility, lender identity, or legal disclosures
 - No external application URL supplied → do not invent one
 
@@ -152,7 +189,7 @@ Invalid/unavailable slug → not-found response.
 - Form: first name, last name, email, phone, reason (Sell a Property | Property for Sale | Remodeling | Financing | General), message
 - Omit Facebook until URL is supplied
 
-## 7. Components
+## 8. Components
 
 Reusable presentational components (business data kept outside):
 
@@ -161,6 +198,7 @@ Reusable presentational components (business data kept outside):
 - `PrimaryButton`, `SecondaryButton`
 - `ServiceCard`
 - `PropertyCard`, `PropertyGallery`, `FinancingBadge`
+- `PropertyInquiryForm` (on-page detail inquiry; reusable field pattern with property context)
 - `FormField`, `FormSelect`, `FormTextarea`, `FormStatus`
 - `BeforeAfterPair`
 - `ContactCTA`
@@ -169,7 +207,7 @@ Header: logo/brand left, nav (Home, Sell Your Property, Properties for Sale, Rem
 
 Footer: brand, short tagline if approved, quick links, verified contact only, copyright. No invented email/address/hours/social.
 
-## 8. Data model
+## 9. Data model
 
 ### Property (fixture)
 
@@ -190,7 +228,7 @@ Do not require residential-only fields for land or commercial. Do not fabricate 
 
 Do not expose submission records via public APIs.
 
-## 9. Forms, privacy, and email
+## 10. Forms, privacy, and email
 
 ### Pipeline
 
@@ -198,9 +236,11 @@ Do not expose submission records via public APIs.
 2. POST to Route Handler (HTTPS in production)
 3. Server validation + sanitization
 4. Spam protection (honeypot + rate limiting)
-5. Privacy-safe audit event (`SELLER_FORM_SUBMITTED` | `CONSULTATION_FORM_SUBMITTED` | `CONTACT_FORM_SUBMITTED`) with event type, timestamp, correlation id, success/failure — **no** names, phones, emails, messages, or full payloads in general logs
+5. Privacy-safe audit event (`SELLER_FORM_SUBMITTED` | `CONSULTATION_FORM_SUBMITTED` | `CONTACT_FORM_SUBMITTED` | property-inquiry equivalent under `PROPERTY_BUYER`) with event type, timestamp, correlation id, success/failure — **no** names, phones, emails, messages, or full payloads in general logs
 6. Send email if `LEAD_INBOX_EMAIL` and `RESEND_API_KEY` are set; otherwise return a safe “delivery not configured” failure without leaking internals
 7. User-facing success / safe failure; preserve entered values after transient failure when safe
+
+Property inquiry submissions include non-PII property identifiers (slug/id/title) for routing context only.
 
 ### Privacy rules
 
@@ -216,13 +256,13 @@ Do not expose submission records via public APIs.
 - `RESEND_API_KEY`
 - Optional rate-limit related vars if needed
 
-## 10. Error handling
+## 11. Error handling
 
 - User errors: plain language; what failed; no stack traces, DB, or internal API details
 - Server: correlation ids for troubleshooting
 - Preserve form input in the browser after transient failures when safe
 
-## 11. SEO
+## 12. SEO
 
 Every public page:
 
@@ -234,22 +274,23 @@ Every public page:
 
 Do not: fake location landing pages, mass-generated SEO pages, fake review/rating structured data.
 
-## 12. Accessibility
+## 13. Accessibility
 
 Target WCAG 2.2 AA: semantic HTML, one H1 per page, logical heading order, form labels, descriptive errors, keyboard navigation, visible focus, accessible mobile menu, sufficient contrast, alt text, decorative images excluded from assistive reading where appropriate, buttons vs links used correctly, no color-only interaction, comfortable touch targets, `prefers-reduced-motion`.
 
-## 13. Responsive design
+## 14. Responsive design
 
 Mobile-first. Breakpoints by content behavior. Verify small mobile, large mobile, tablet, laptop, large desktop.
 
 Rules: no horizontal scroll; forms single-column when needed; usable nav; easy tap targets; text no overflow; property cards reflow; galleries usable; footer stacks; never hide critical information solely for mobile.
 
-## 14. Testing strategy
+## 15. Testing strategy
 
 - Home: CTAs, service cards, nav, no unsupported claims, alt text, mobile, palette, keyboard focus
 - Sell: valid/invalid/missing fields, property type, large/malicious input, duplicate behavior, network/server failure, keyboard/mobile, privacy logging
-- Properties: zero/one/many, missing image/optional fields, long title/description, financing true/false, unavailable, mobile cards, detail navigation
-- Property detail: valid/invalid slug, single/multiple/broken images, financing CTAs, SEO from real fixture data only
+- Properties: zero/one/many, missing image/optional fields, long title/description, financing true/false, unavailable, mobile cards, detail navigation, **Ask About This Property** reaches detail inquiry in ≤2 clicks from Home
+- Property detail: valid/invalid slug, single/multiple/broken images, financing CTAs, **on-page inquiry submit**, SEO from fixture data only
+- Click-budget: verify primary tasks meet Section 5 budgets
 - Remodeling: service placeholders, before/after pairing, consultation validation/submission, privacy
 - Financing: CTA behavior, no unsupported financial claims, a11y/mobile
 - Contact: phone link, form + reason routing, validation, spam, privacy
@@ -257,7 +298,7 @@ Rules: no horizontal scroll; forms single-column when needed; usable nav; easy t
 
 Do not claim a test passed unless executed.
 
-## 15. Implementation order (summary)
+## 16. Implementation order (summary)
 
 1. Design tokens + global typography/spacing/buttons/forms
 2. Header, mobile nav, footer
@@ -266,7 +307,7 @@ Do not claim a test passed unless executed.
 5. Responsive, a11y, privacy, palette, and regression audits
 6. Structured implementation report (files, routes, env names, tests, UNKNOWN content, decisions needing approval)
 
-## 16. Out of scope (for this phase)
+## 17. Out of scope (for this phase)
 
 - Lead database / CRM
 - Admin UI for properties
@@ -276,13 +317,14 @@ Do not claim a test passed unless executed.
 - Real owner-approved remodeling list and project photos
 - Lender/application deep integration
 
-## 17. Implementation decisions needing human approval later
+## 18. Implementation decisions needing human approval later
 
 - Whether navy-at-opacity overlays for hero text are acceptable (recommended; no new hue)
 - Email provider locked to Resend for this phase (swap later if desired)
 - Financing CTA from property detail routes to `/financing` until an external URL is supplied
 - Exact placeholder copy for remodeling services list
+- Exact card button labels (“Ask About This Property” vs shorter wording) if owner prefers different phrasing
 
-## 18. Success criteria
+## 19. Success criteria
 
-Implementation is complete only when applicable acceptance checklist items from the implementation prompt pass: seven routes, working nav, locked palette, no invented business facts, form workflows (email when configured), property fixture behavior, mobile/keyboard, privacy, SEO from approved content, and executed regression/palette/privacy/a11y checks with honest results.
+Implementation is complete only when applicable acceptance checklist items from the implementation prompt pass: seven routes, working nav, locked palette, no invented business facts, form workflows (email when configured), property fixture behavior, **click-budget targets in Section 5**, mobile/keyboard, privacy, SEO from approved content, and executed regression/palette/privacy/a11y checks with honest results.
