@@ -1,0 +1,61 @@
+:root {
+  --color-navy: #0C2340;
+  --color-gold: #B08D57;
+  --color-neutral: #F6F6F6;
+  --color-white: #FFFFFF;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2rem;
+  --space-6: 3rem;
+  --space-7: 4rem;
+  --font-sans: "Source Sans 3", "Segoe UI", sans-serif;
+  --font-display: "Libre Franklin", "Segoe UI", sans-serif;
+  --focus-ring: 0 0 0 3px var(--color-gold);
+  --max-width: 72rem;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  color: var(--color-navy);
+  background: var(--color-white);
+  font-family: var(--font-sans);
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: var(--color-navy);
+}
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
