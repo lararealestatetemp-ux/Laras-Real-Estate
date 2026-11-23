@@ -1,0 +1,127 @@
+.page {
+  padding-bottom: var(--space-7);
+}
+
+.section,
+.consultation {
+  width: min(calc(100% - (var(--space-3) * 2)), var(--max-width));
+  margin-inline: auto;
+  padding-top: var(--space-6);
+}
+
+.sectionHeader {
+  max-width: 44rem;
+}
+
+.sectionHeader h2,
+.sectionHeader p {
+  margin-block: 0 var(--space-3);
+}
+
+.servicesList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
+  gap: var(--space-3);
+  padding: 0;
+  margin: var(--space-4) 0 0;
+  list-style: none;
+}
+
+.service {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  font-size: 1.125rem;
+  font-weight: 700;
+  background: var(--color-neutral);
+  border-top: var(--space-1) solid var(--color-gold);
+}
+
+.approvalLabel,
+.disclosure {
+  width: fit-content;
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: var(--color-white);
+  border-left: var(--space-1) solid var(--color-gold);
+}
+
+.comparison {
+  margin: var(--space-4) 0 0;
+}
+
+.disclosure {
+  margin-bottom: var(--space-3);
+  background: var(--color-neutral);
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.imagePanel {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-neutral);
+  border-radius: var(--space-1);
+}
+
+.imageLabel {
+  position: absolute;
+  z-index: 1;
+  top: var(--space-3);
+  left: var(--space-3);
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-white);
+  font-weight: 700;
+  background: var(--color-navy);
+}
+
+.comparisonImage {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.consultation {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+  gap: var(--space-6);
+}
+
+.consultationCopy h2,
+.consultationCopy p {
+  margin-block: 0 var(--space-3);
+}
+
+.phoneLink {
+  color: var(--color-navy);
+  font-weight: 700;
+}
+
+.formPanel {
+  padding: var(--space-5);
+  background: var(--color-neutral);
+  border: 1px solid var(--color-gold);
+  border-radius: var(--space-1);
+  scroll-margin-top: var(--space-6);
+}
+
+@media (max-width: 48rem) {
+  .imageGrid,
+  .consultation {
+    grid-template-columns: 1fr;
+  }
+
+  .consultation {
+    gap: var(--space-4);
+  }
+
+  .formPanel {
+    padding: var(--space-4);
+  }
+}
