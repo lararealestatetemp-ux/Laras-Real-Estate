@@ -1,4 +1,4 @@
-import { readFileSync, readdirSync, statSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { APPROVED_COLORS, APPROVED_HEX } from "@/lib/tokens";
 
@@ -10,14 +10,23 @@ const SKIPPED_DIRS = new Set([
   ".worktrees",
 ]);
 
-function walk(dir: string, acc: string[] = []): string[] {
+function walkMatching(
+  dir: string,
+  pattern: RegExp,
+  acc: string[] = [],
+): string[] {
+  if (!existsSync(dir)) return acc;
   for (const name of readdirSync(dir)) {
     if (SKIPPED_DIRS.has(name)) continue;
     const p = join(dir, name);
-    if (statSync(p).isDirectory()) walk(p, acc);
-    else if (/\.(css|tsx|ts|jsx|js|svg)$/.test(name)) acc.push(p);
+    if (statSync(p).isDirectory()) walkMatching(p, pattern, acc);
+    else if (pattern.test(name)) acc.push(p);
   }
   return acc;
+}
+
+function walk(dir: string, acc: string[] = []): string[] {
+  return walkMatching(dir, /\.(css|tsx|ts|jsx|js|svg)$/, acc);
 }
 
 test("source and svg files only use approved hex colors (or CSS variables)", () => {
@@ -74,4 +83,14 @@ test("globals.css and layout wire loaded Next font CSS variables into active typ
   expect(layoutTsx).toContain('variable: "--font-sans-loaded"');
   expect(layoutTsx).toContain('variable: "--font-display-loaded"');
   expect(layoutTsx).toMatch(/className=\{`.*\$\{sourceSans\.variable\}.*\$\{libreFranklin\.variable\}.*`\}/);
+});
+
+test("no binary .ico icon files exist under app/ or public/ (icons must be palette-audited SVG)", () => {
+  const root = join(process.cwd());
+  const icoFiles = [
+    ...walkMatching(join(root, "app"), /\.ico$/i),
+    ...walkMatching(join(root, "public"), /\.ico$/i),
+  ];
+  expect(icoFiles).toEqual([]);
+  expect(existsSync(join(root, "app", "icon.svg"))).toBe(true);
 });
