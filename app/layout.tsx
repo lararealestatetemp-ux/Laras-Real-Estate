@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Libre_Franklin, Source_Sans_3 } from "next/font/google";
 
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SiteHeader } from "@/components/layout/SiteHeader";
 import { BUSINESS_NAME, TAGLINE } from "@/lib/constants";
 
 import "./globals.css";
@@ -33,7 +35,11 @@ export default function RootLayout({
       lang="en"
       className={`${sourceSans.variable} ${libreFranklin.variable}`}
     >
-      <body>{children}</body>
+      <body>
+        <SiteHeader />
+        <main id="main">{children}</main>
+        <SiteFooter />
+      </body>
     </html>
   );
 }

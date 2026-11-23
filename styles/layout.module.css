@@ -1,0 +1,151 @@
+.header {
+  position: relative;
+  z-index: 10;
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gold);
+}
+
+.headerInner,
+.footerInner {
+  width: min(100% - 2rem, var(--max-width));
+  margin-inline: auto;
+}
+
+.headerInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 5rem;
+  gap: var(--space-3);
+}
+
+.brand {
+  color: var(--color-navy);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.desktopNav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.navList,
+.mobileList,
+.footerLinks {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.navList {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.navLink {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.navLink:hover {
+  text-decoration: underline;
+  text-underline-offset: var(--space-2);
+}
+
+.mobileNav {
+  display: none;
+}
+
+.menuButton {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  color: var(--color-navy);
+  font: inherit;
+  font-weight: 700;
+  background: var(--color-neutral);
+  border: 2px solid var(--color-navy);
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.mobilePanel {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  padding: var(--space-3);
+  background: var(--color-white);
+  border-bottom: 1px solid var(--color-gold);
+}
+
+.mobileList {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.mobileLink {
+  display: block;
+  padding: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  background: var(--color-neutral);
+}
+
+.footer {
+  padding-block: var(--space-6);
+  color: var(--color-white);
+  background: var(--color-navy);
+}
+
+.footerInner {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: var(--space-5);
+}
+
+.footerBrand,
+.footer a {
+  color: var(--color-white);
+}
+
+.footerBrand {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.tagline,
+.footerHeading {
+  margin-top: 0;
+}
+
+.footerHeading {
+  font-size: 1rem;
+}
+
+.footerLinks {
+  display: grid;
+  gap: var(--space-2);
+}
+
+@media (max-width: 56rem) {
+  .desktopNav {
+    display: none;
+  }
+
+  .mobileNav {
+    display: block;
+  }
+}
+
+@media (max-width: 40rem) {
+  .footerInner {
+    grid-template-columns: 1fr;
+  }
+}
