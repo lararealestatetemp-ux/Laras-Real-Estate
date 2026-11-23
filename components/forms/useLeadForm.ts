@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useId, useState } from "react";
 import type { FormEvent } from "react";
 
 import { BUSINESS_PHONE } from "@/lib/constants";
@@ -15,7 +15,29 @@ type LeadResponse = {
 
 const FALLBACK_ERROR = `We could not send your message right now. Please call ${BUSINESS_PHONE}.`;
 
+function focusSubmissionError(
+  form: HTMLFormElement,
+  fields: Record<string, string>,
+  statusId: string,
+) {
+  const firstInvalidName = Object.keys(fields)[0];
+
+  requestAnimationFrame(() => {
+    const firstInvalidControl = firstInvalidName
+      ? form.elements.namedItem(firstInvalidName)
+      : null;
+
+    if (firstInvalidControl instanceof HTMLElement) {
+      firstInvalidControl.focus();
+      return;
+    }
+
+    form.ownerDocument.getElementById(statusId)?.focus();
+  });
+}
+
 export function useLeadForm(endpoint: string) {
+  const statusId = useId();
   const [status, setStatus] = useState<SubmissionStatus>("idle");
   const [error, setError] = useState<string>();
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -42,9 +64,11 @@ export function useLeadForm(endpoint: string) {
 
       if (!response.ok || json.ok !== true) {
         // Leave field values untouched so the visitor can correct and retry.
-        setFieldErrors(json.fields ?? {});
+        const responseFieldErrors = json.fields ?? {};
+        setFieldErrors(responseFieldErrors);
         setError(json.error ?? FALLBACK_ERROR);
         setStatus("error");
+        focusSubmissionError(form, responseFieldErrors, statusId);
         return;
       }
 
@@ -53,8 +77,9 @@ export function useLeadForm(endpoint: string) {
     } catch {
       setError(FALLBACK_ERROR);
       setStatus("error");
+      focusSubmissionError(form, {}, statusId);
     }
   }
 
-  return { status, error, fieldErrors, handleSubmit };
+  return { status, statusId, error, fieldErrors, handleSubmit };
 }

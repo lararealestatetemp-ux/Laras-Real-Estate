@@ -11,7 +11,7 @@ import { Honeypot } from "./Honeypot";
 import { useLeadForm } from "./useLeadForm";
 
 export function SellerForm() {
-  const { status, error, fieldErrors, handleSubmit } =
+  const { status, statusId, error, fieldErrors, handleSubmit } =
     useLeadForm("/api/leads/seller");
 
   return (
@@ -112,6 +112,7 @@ export function SellerForm() {
           Request Cash Offer Information
         </PrimaryButton>
         <FormStatus
+          id={statusId}
           status={status}
           message={
             status === "pending"

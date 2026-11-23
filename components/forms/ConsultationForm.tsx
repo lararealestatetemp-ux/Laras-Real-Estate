@@ -10,7 +10,7 @@ import { Honeypot } from "./Honeypot";
 import { useLeadForm } from "./useLeadForm";
 
 export function ConsultationForm() {
-  const { status, error, fieldErrors, handleSubmit } = useLeadForm(
+  const { status, statusId, error, fieldErrors, handleSubmit } = useLeadForm(
     "/api/leads/consultation",
   );
 
@@ -72,6 +72,7 @@ export function ConsultationForm() {
           Request Consultation
         </PrimaryButton>
         <FormStatus
+          id={statusId}
           status={status}
           message={
             status === "pending"

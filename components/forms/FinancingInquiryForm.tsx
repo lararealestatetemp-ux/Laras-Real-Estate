@@ -10,7 +10,7 @@ import { Honeypot } from "./Honeypot";
 import { useLeadForm } from "./useLeadForm";
 
 export function FinancingInquiryForm() {
-  const { status, error, fieldErrors, handleSubmit } =
+  const { status, statusId, error, fieldErrors, handleSubmit } =
     useLeadForm("/api/leads/contact");
 
   return (
@@ -71,6 +71,7 @@ export function FinancingInquiryForm() {
           Send Inquiry
         </PrimaryButton>
         <FormStatus
+          id={statusId}
           status={status}
           message={
             status === "pending"

@@ -34,15 +34,21 @@ test("empty seller form shows accessible validation errors", async ({ page }) =>
   await expect(page.locator("#seller-company-error")).toHaveCount(0);
 });
 
-test("seller error messages are reachable by keyboard focus order", async ({
-  page,
-}) => {
+test("empty seller form moves focus to a validation error", async ({ page }) => {
   await page.goto("/sell");
   await page.getByRole("button", { name: /request cash offer/i }).click();
   await expect(page.locator("#seller-first-name-error")).toBeVisible();
 
-  await page.locator("#seller-first-name").focus();
-  await expect(page.locator("#seller-first-name")).toBeFocused();
-  await page.keyboard.press("Tab");
-  await expect(page.locator("#seller-last-name")).toBeFocused();
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const activeElement = document.activeElement;
+        return (
+          activeElement?.id === "seller-first-name" ||
+          (activeElement?.getAttribute("role") === "alert" &&
+            activeElement?.getAttribute("tabindex") === "-1")
+        );
+      }),
+    )
+    .toBe(true);
 });

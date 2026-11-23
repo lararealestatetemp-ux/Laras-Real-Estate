@@ -16,7 +16,7 @@ export function PropertyInquiryForm({
   propertySlug: string;
   propertyTitle: string;
 }) {
-  const { status, error, fieldErrors, handleSubmit } = useLeadForm(
+  const { status, statusId, error, fieldErrors, handleSubmit } = useLeadForm(
     "/api/leads/property-inquiry",
   );
 
@@ -81,6 +81,7 @@ export function PropertyInquiryForm({
           Send Inquiry
         </PrimaryButton>
         <FormStatus
+          id={statusId}
           status={status}
           message={
             status === "pending"

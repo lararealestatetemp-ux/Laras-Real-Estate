@@ -11,7 +11,7 @@ import { Honeypot } from "./Honeypot";
 import { useLeadForm } from "./useLeadForm";
 
 export function ContactForm() {
-  const { status, error, fieldErrors, handleSubmit } =
+  const { status, statusId, error, fieldErrors, handleSubmit } =
     useLeadForm("/api/leads/contact");
 
   return (
@@ -85,6 +85,7 @@ export function ContactForm() {
           Send Message
         </PrimaryButton>
         <FormStatus
+          id={statusId}
           status={status}
           message={
             status === "pending"
