@@ -108,17 +108,20 @@ function sanitizeLeadData(
 ): Record<string, string> {
   return Object.fromEntries(
     Object.entries(data).map(([key, value]) => {
+      const isMessageField =
+        key === "message" || key === "generalInfo" || key === "comments";
       const maxLen =
         key === "firstName" || key === "lastName"
           ? 80
           : key === "email"
             ? 254
-            : key === "message" ||
-                key === "generalInfo" ||
-                key === "comments"
+            : isMessageField
               ? 2000
               : 200;
-      return [key, sanitizeText(value, maxLen)];
+      return [
+        key,
+        sanitizeText(value, maxLen, { preserveNewlines: isMessageField }),
+      ];
     }),
   );
 }

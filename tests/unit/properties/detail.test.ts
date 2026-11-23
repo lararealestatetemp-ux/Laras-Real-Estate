@@ -53,7 +53,9 @@ test("inquiry form has labeled fields and submits the required payload", async (
   const user = userEvent.setup();
   const fetchMock = vi
     .spyOn(globalThis, "fetch")
-    .mockResolvedValue(new Response(null, { status: 200 }));
+    .mockResolvedValue(
+      Response.json({ ok: true, correlationId: "c-1" }, { status: 200 }),
+    );
   render(
     createElement(PropertyInquiryForm, {
       propertySlug: "test-house",
@@ -96,7 +98,15 @@ test("inquiry form has labeled fields and submits the required payload", async (
 test("inquiry form preserves values and reports a failed request", async () => {
   const user = userEvent.setup();
   vi.spyOn(globalThis, "fetch").mockResolvedValue(
-    new Response(null, { status: 500 }),
+    Response.json(
+      {
+        ok: false,
+        correlationId: "c-2",
+        error:
+          "We could not send your message right now. Please call 936-208-3019.",
+      },
+      { status: 503 },
+    ),
   );
   render(
     createElement(PropertyInquiryForm, {
@@ -114,7 +124,7 @@ test("inquiry form preserves values and reports a failed request", async () => {
 
   expect(
     await screen.findByText(
-      "We could not send your inquiry. Please try again.",
+      "We could not send your message right now. Please call 936-208-3019.",
     ),
   ).toBeInTheDocument();
   expect(firstName).toHaveValue("Ada");

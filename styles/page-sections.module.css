@@ -1,0 +1,55 @@
+.section {
+  width: min(calc(100% - (var(--space-3) * 2)), var(--max-width));
+  margin-inline: auto;
+  padding-block: var(--space-6);
+}
+
+.twoColumn {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.copy h1,
+.copy h2,
+.copy p,
+.copy ol {
+  margin-block: 0 var(--space-3);
+}
+
+.copy ol {
+  padding-left: var(--space-4);
+}
+
+.copy li + li {
+  margin-top: var(--space-2);
+}
+
+.formPanel {
+  padding: var(--space-5);
+  background: var(--color-neutral);
+  border: 1px solid var(--color-gold);
+  border-radius: var(--space-1);
+  scroll-margin-top: var(--space-6);
+}
+
+.formPanel h2 {
+  margin-top: 0;
+}
+
+.phoneLink {
+  font-weight: 700;
+  color: var(--color-navy);
+}
+
+@media (max-width: 48rem) {
+  .twoColumn {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .formPanel {
+    padding: var(--space-4);
+  }
+}

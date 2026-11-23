@@ -1,16 +1,13 @@
 "use client";
 
-import { useState } from "react";
-import type { FormEvent } from "react";
-
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import styles from "@/styles/forms.module.css";
 
 import { FormField } from "./FormField";
 import { FormStatus } from "./FormStatus";
 import { FormTextarea } from "./FormTextarea";
-
-type SubmissionStatus = "idle" | "pending" | "success" | "error";
+import { Honeypot } from "./Honeypot";
+import { useLeadForm } from "./useLeadForm";
 
 export function PropertyInquiryForm({
   propertySlug,
@@ -19,41 +16,9 @@ export function PropertyInquiryForm({
   propertySlug: string;
   propertyTitle: string;
 }) {
-  const [status, setStatus] = useState<SubmissionStatus>("idle");
-
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const form = event.currentTarget;
-    const formData = new FormData(form);
-    const value = (name: string) => String(formData.get(name) ?? "").trim();
-
-    setStatus("pending");
-
-    try {
-      const response = await fetch("/api/leads/property-inquiry", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          firstName: value("firstName"),
-          lastName: value("lastName"),
-          email: value("email"),
-          phone: value("phone"),
-          message: value("message"),
-          company: value("company"),
-          propertySlug: value("propertySlug"),
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Inquiry request failed");
-      }
-
-      form.reset();
-      setStatus("success");
-    } catch {
-      setStatus("error");
-    }
-  }
+  const { status, error, fieldErrors, handleSubmit } = useLeadForm(
+    "/api/leads/property-inquiry",
+  );
 
   return (
     <form className={styles.form} onSubmit={handleSubmit}>
@@ -66,6 +31,7 @@ export function PropertyInquiryForm({
           name="firstName"
           label="First name"
           autoComplete="given-name"
+          error={fieldErrors.firstName}
           required
         />
         <FormField
@@ -73,6 +39,7 @@ export function PropertyInquiryForm({
           name="lastName"
           label="Last name"
           autoComplete="family-name"
+          error={fieldErrors.lastName}
           required
         />
         <FormField
@@ -83,6 +50,7 @@ export function PropertyInquiryForm({
           inputMode="email"
           autoComplete="email"
           spellCheck={false}
+          error={fieldErrors.email}
           required
         />
         <FormField
@@ -92,6 +60,7 @@ export function PropertyInquiryForm({
           type="tel"
           inputMode="tel"
           autoComplete="tel"
+          error={fieldErrors.phone}
         />
       </div>
       <FormTextarea
@@ -99,19 +68,10 @@ export function PropertyInquiryForm({
         name="message"
         label="Message"
         rows={6}
+        error={fieldErrors.message}
         required
       />
-      <div className={styles.visuallyHidden} aria-hidden="true">
-        <label htmlFor="property-inquiry-company">Company</label>
-        <input
-          id="property-inquiry-company"
-          name="company"
-          type="text"
-          autoComplete="off"
-          tabIndex={-1}
-          aria-hidden="true"
-        />
-      </div>
+      <Honeypot id="property-inquiry-company" />
       <input name="propertySlug" type="hidden" value={propertySlug} readOnly />
       <div className={styles.submitRow}>
         <PrimaryButton type="submit" disabled={status === "pending"}>
@@ -128,7 +88,7 @@ export function PropertyInquiryForm({
               : status === "success"
                 ? "Thank you. Your inquiry has been sent."
                 : status === "error"
-                  ? "We could not send your inquiry. Please try again."
+                  ? error
                   : undefined
           }
         />
