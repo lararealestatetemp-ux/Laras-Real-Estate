@@ -94,3 +94,20 @@ test("no binary .ico icon files exist under app/ or public/ (icons must be palet
   expect(icoFiles).toEqual([]);
   expect(existsSync(join(root, "app", "icon.svg"))).toBe(true);
 });
+
+test("stylesheets do not derive off-palette colors via CSS filters or color functions", () => {
+  const root = join(process.cwd());
+  const cssFiles = walkMatching(root, /\.css$/i);
+  const disallowed =
+    /\bfilter\s*:|\b(?:brightness|contrast|saturate|hue-rotate|invert|sepia|color-mix|rgba?|hsla?|oklch|oklab)\s*\(/gi;
+  const offenders: string[] = [];
+
+  for (const file of cssFiles) {
+    const text = readFileSync(file, "utf8");
+    for (const match of text.matchAll(disallowed)) {
+      offenders.push(`${file}: ${match[0]}`);
+    }
+  }
+
+  expect(offenders).toEqual([]);
+});

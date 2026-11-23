@@ -1,6 +1,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { createElement } from "react";
+import "@testing-library/jest-dom/vitest";
+import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
+import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { NAV_ITEMS } from "@/lib/constants";
 
 test("nav exposes all six destinations", () => {
@@ -14,15 +19,41 @@ test("nav exposes all six destinations", () => {
   ]);
 });
 
-test("mobile navigation exposes an accessible disclosure", () => {
-  const source = readFileSync(
-    join(process.cwd(), "components/layout/MobileNavigation.tsx"),
-    "utf8",
+test("mobile navigation toggles disclosure aria-expanded and reveals all six links", async () => {
+  const user = userEvent.setup();
+  render(createElement(MobileNavigation));
+
+  const nav = screen.getByRole("navigation", { name: "Mobile navigation" });
+  const button = within(nav).getByRole("button", { name: "Menu" });
+
+  expect(button).toHaveAttribute("aria-controls", "mobile-navigation");
+  expect(button).toHaveAttribute("aria-expanded", "false");
+  expect(within(nav).queryAllByRole("link")).toHaveLength(0);
+
+  await user.click(button);
+
+  expect(button).toHaveAttribute("aria-expanded", "true");
+  const links = within(nav).getAllByRole("link");
+  expect(links).toHaveLength(6);
+  for (const link of links) {
+    expect(link).toBeVisible();
+  }
+  expect(
+    links.map((link) => ({
+      label: link.textContent,
+      href: link.getAttribute("href"),
+    })),
+  ).toEqual(
+    NAV_ITEMS.map((item) => ({
+      label: item.label,
+      href: item.href,
+    })),
   );
 
-  expect(source).toContain('aria-controls="mobile-navigation"');
-  expect(source).toContain("aria-expanded={isOpen}");
-  expect(source).toContain("NAV_ITEMS.map");
+  await user.click(button);
+
+  expect(button).toHaveAttribute("aria-expanded", "false");
+  expect(within(nav).queryAllByRole("link")).toHaveLength(0);
 });
 
 test("root layout wraps main content with the global shell", () => {

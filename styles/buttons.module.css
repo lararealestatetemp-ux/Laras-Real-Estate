@@ -20,7 +20,9 @@
 }
 
 .primary:hover {
-  filter: brightness(0.95);
+  color: var(--color-gold);
+  background: var(--color-navy);
+  border-color: var(--color-navy);
 }
 
 .primary:disabled {
