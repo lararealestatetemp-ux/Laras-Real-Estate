@@ -28,8 +28,18 @@ test("unknown routes use the custom not-found page", async ({ page }) => {
   ).toBeVisible();
 });
 
-test("unseeded property routes return not found", async ({ page }) => {
-  const response = await page.goto("/properties/unseeded");
+test("unseeded property routes render not-found UI and stay out of search indexes", async ({
+  page,
+}) => {
+  await page.goto("/properties/unseeded");
 
-  expect(response?.status()).toBe(404);
+  // With Cache Components the shell streams first, so the HTTP status stays
+  // 200 for unknown slugs; Next.js renders the not-found UI and adds noindex.
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Page Not Found" }),
+  ).toBeVisible();
+  await expect(page.locator('meta[name="robots"]')).toHaveAttribute(
+    "content",
+    /noindex/,
+  );
 });

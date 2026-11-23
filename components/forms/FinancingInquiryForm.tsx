@@ -14,7 +14,7 @@ export function FinancingInquiryForm() {
     useLeadForm("/api/leads/contact");
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <div className={styles.fieldGrid}>
         <FormField
           id="financing-first-name"

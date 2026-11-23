@@ -43,3 +43,12 @@ next-env.d.ts
 
 # local worktrees
 .worktrees/
+
+# playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Next.js-generated agent rules
+/AGENTS.md

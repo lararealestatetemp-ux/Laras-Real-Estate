@@ -15,7 +15,7 @@ export function ConsultationForm() {
   );
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <div className={styles.fieldGrid}>
         <FormField
           id="consultation-first-name"

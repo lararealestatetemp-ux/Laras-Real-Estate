@@ -15,7 +15,7 @@ export function ContactForm() {
     useLeadForm("/api/leads/contact");
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <div className={styles.fieldGrid}>
         <FormField
           id="contact-first-name"

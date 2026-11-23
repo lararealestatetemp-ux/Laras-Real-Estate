@@ -21,7 +21,7 @@ export function PropertyInquiryForm({
   );
 
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <p className={styles.intro}>
         Send a question about <strong>{propertyTitle}</strong>.
       </p>
