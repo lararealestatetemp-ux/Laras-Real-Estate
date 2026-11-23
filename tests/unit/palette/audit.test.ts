@@ -1,18 +1,26 @@
 import { readFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
-import { APPROVED_HEX } from "@/lib/tokens";
+import { APPROVED_COLORS, APPROVED_HEX } from "@/lib/tokens";
+
+const SKIPPED_DIRS = new Set([
+  "node_modules",
+  ".next",
+  "docs",
+  ".git",
+  ".worktrees",
+]);
 
 function walk(dir: string, acc: string[] = []): string[] {
   for (const name of readdirSync(dir)) {
-    if (name === "node_modules" || name === ".next" || name === "docs") continue;
+    if (SKIPPED_DIRS.has(name)) continue;
     const p = join(dir, name);
     if (statSync(p).isDirectory()) walk(p, acc);
-    else if (/\.(css|tsx|ts|jsx|js)$/.test(name)) acc.push(p);
+    else if (/\.(css|tsx|ts|jsx|js|svg)$/.test(name)) acc.push(p);
   }
   return acc;
 }
 
-test("source files only use approved hex colors (or CSS variables)", () => {
+test("source and svg files only use approved hex colors (or CSS variables)", () => {
   const root = join(process.cwd());
   const files = walk(root);
   const hex = /#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})\b/g;
@@ -32,4 +40,38 @@ test("source files only use approved hex colors (or CSS variables)", () => {
     }
   }
   expect(offenders).toEqual([]);
+});
+
+test("tokens export APPROVED_COLORS and APPROVED_HEX for the locked palette", () => {
+  expect(APPROVED_COLORS).toEqual({
+    navy: "#0C2340",
+    gold: "#B08D57",
+    neutral: "#F6F6F6",
+    white: "#FFFFFF",
+  });
+  expect([...APPROVED_HEX]).toEqual([
+    "#0C2340",
+    "#B08D57",
+    "#F6F6F6",
+    "#FFFFFF",
+  ]);
+});
+
+test("globals.css and layout wire loaded Next font CSS variables into active typography", () => {
+  const globalsCss = readFileSync(
+    join(process.cwd(), "app", "globals.css"),
+    "utf8",
+  );
+  const layoutTsx = readFileSync(
+    join(process.cwd(), "app", "layout.tsx"),
+    "utf8",
+  );
+
+  expect(globalsCss).toMatch(/--font-sans:.*var\(--font-sans-loaded/);
+  expect(globalsCss).toMatch(/--font-display:.*var\(--font-display-loaded/);
+  expect(globalsCss).toContain("font-family: var(--font-sans)");
+  expect(globalsCss).toContain("font-family: var(--font-display)");
+  expect(layoutTsx).toContain('variable: "--font-sans-loaded"');
+  expect(layoutTsx).toContain('variable: "--font-display-loaded"');
+  expect(layoutTsx).toMatch(/className=\{`.*\$\{sourceSans\.variable\}.*\$\{libreFranklin\.variable\}.*`\}/);
 });

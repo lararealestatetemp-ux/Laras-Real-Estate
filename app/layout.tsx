@@ -7,11 +7,13 @@ import "./globals.css";
 
 const sourceSans = Source_Sans_3({
   subsets: ["latin"],
+  display: "swap",
   variable: "--font-sans-loaded",
 });
 
 const libreFranklin = Libre_Franklin({
   subsets: ["latin"],
+  display: "swap",
   variable: "--font-display-loaded",
 });
 

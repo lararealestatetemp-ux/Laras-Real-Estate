@@ -1,9 +1,11 @@
-export const APPROVED_HEX = new Set([
-  "#0C2340",
-  "#B08D57",
-  "#F6F6F6",
-  "#FFFFFF",
-]);
+export const APPROVED_COLORS = {
+  navy: "#0C2340",
+  gold: "#B08D57",
+  neutral: "#F6F6F6",
+  white: "#FFFFFF",
+} as const;
+
+export const APPROVED_HEX = new Set<string>(Object.values(APPROVED_COLORS));
 
 export const cssVar = {
   navy: "var(--color-navy)",
