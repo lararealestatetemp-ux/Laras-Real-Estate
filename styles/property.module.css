@@ -1,0 +1,125 @@
+.pageHero {
+  padding-block: var(--space-6);
+  color: var(--color-white);
+  background: var(--color-navy);
+}
+
+.pageHeroInner,
+.listing {
+  width: min(calc(100% - (var(--space-3) * 2)), var(--max-width));
+  margin-inline: auto;
+}
+
+.pageHero h1,
+.pageHero p {
+  margin-block: 0;
+}
+
+.pageHero p {
+  max-width: 42rem;
+  margin-top: var(--space-2);
+}
+
+.listing {
+  padding-block: var(--space-6);
+}
+
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+}
+
+.filterButton {
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-navy);
+  font: inherit;
+  font-weight: 600;
+  background: var(--color-white);
+  border: 2px solid var(--color-navy);
+  border-radius: var(--space-1);
+  cursor: pointer;
+}
+
+.filterButton[aria-pressed="true"],
+.filterButton:hover {
+  color: var(--color-white);
+  background: var(--color-navy);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr));
+  gap: var(--space-5);
+}
+
+.card {
+  overflow: hidden;
+  background: var(--color-white);
+  border: 1px solid var(--color-gold);
+  border-radius: var(--space-1);
+}
+
+.cardImage {
+  width: 100%;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+}
+
+.cardBody {
+  padding: var(--space-4);
+}
+
+.placeholderNote,
+.type,
+.financingBadge {
+  width: fit-content;
+  margin: 0 0 var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  font-size: 0.875rem;
+  font-weight: 700;
+  background: var(--color-neutral);
+}
+
+.placeholderNote {
+  border-left: var(--space-1) solid var(--color-gold);
+}
+
+.cardTitle,
+.price,
+.location {
+  margin: 0 0 var(--space-2);
+}
+
+.cardTitle {
+  font-size: 1.5rem;
+}
+
+.price {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.type {
+  text-transform: capitalize;
+}
+
+.financingBadge {
+  color: var(--color-navy);
+  background: var(--color-gold);
+}
+
+.cardActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-4);
+}
+
+.emptyState {
+  padding: var(--space-5);
+  text-align: center;
+  background: var(--color-neutral);
+}

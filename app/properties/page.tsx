@@ -1,4 +1,12 @@
+import { Suspense } from "react";
+
+import { PropertyCard } from "@/components/property/PropertyCard";
+import { PropertyFilters } from "@/components/property/PropertyFilters";
+import { PageHero } from "@/components/ui/PageHero";
+import { filterPropertiesByType } from "@/lib/properties/queries";
+import type { PropertyType } from "@/lib/properties/types";
 import { buildPageMetadata } from "@/lib/seo";
+import styles from "@/styles/property.module.css";
 
 export const metadata = buildPageMetadata({
   title: "Properties for Sale",
@@ -6,11 +14,56 @@ export const metadata = buildPageMetadata({
   path: "/properties",
 });
 
-export default function PropertiesPage() {
+type PropertiesPageProps = {
+  searchParams: Promise<{ type?: string | string[] }>;
+};
+
+function parsePropertyType(value: string | string[] | undefined): PropertyType | "all" {
+  if (value === "house" || value === "land" || value === "commercial") {
+    return value;
+  }
+
+  return "all";
+}
+
+export async function PropertyListing({
+  searchParams,
+}: PropertiesPageProps) {
+  const params = await searchParams;
+  const properties = filterPropertiesByType(parsePropertyType(params.type));
+
   return (
-    <section>
-      <h1>Properties for Sale</h1>
-      <p>Property listings will be available on this page.</p>
+    <section className={styles.listing} aria-label="Property listings">
+      <PropertyFilters />
+      {properties.length > 0 ? (
+        <div className={styles.grid}>
+          {properties.map((property) => (
+            <PropertyCard key={property.id} property={property} />
+          ))}
+        </div>
+      ) : (
+        <p className={styles.emptyState}>No properties available right now.</p>
+      )}
     </section>
+  );
+}
+
+export default function PropertiesPage(props: PropertiesPageProps) {
+  return (
+    <>
+      <PageHero
+        title="Properties for Sale"
+        description="Browse available houses, land, and commercial properties."
+      />
+      <Suspense
+        fallback={
+          <p className={styles.emptyState} role="status">
+            Loading properties…
+          </p>
+        }
+      >
+        <PropertyListing {...props} />
+      </Suspense>
+    </>
   );
 }
