@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 
 import { BUSINESS_NAME } from "@/lib/constants";
+import { absoluteUrl } from "@/lib/site";
 
 export function buildPageMetadata(input: {
   title: string;
   description: string;
   path: string;
 }): Metadata {
-  const url = input.path;
+  const url = absoluteUrl(input.path);
 
   return {
     title: input.title,

@@ -1,8 +1,7 @@
 import type { MetadataRoute } from "next";
 
-const SITE_URL =
-  process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ??
-  "http://localhost:3000";
+import { getAvailableProperties } from "@/lib/properties/queries";
+import { absoluteUrl } from "@/lib/site";
 
 const ROUTES = [
   "",
@@ -14,7 +13,11 @@ const ROUTES = [
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  return ROUTES.map((path) => ({
-    url: `${SITE_URL}${path}`,
+  const propertyPaths = getAvailableProperties().map(
+    (property) => `/properties/${property.slug}`,
+  );
+
+  return [...ROUTES, ...propertyPaths].map((path) => ({
+    url: absoluteUrl(path),
   }));
 }

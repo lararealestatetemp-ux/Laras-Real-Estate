@@ -5,6 +5,7 @@ import "@testing-library/jest-dom/vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
+import { isCurrentPath } from "@/components/layout/NavLink";
 import { MobileNavigation } from "@/components/layout/MobileNavigation";
 import { NAV_ITEMS } from "@/lib/constants";
 
@@ -62,4 +63,21 @@ test("root layout wraps main content with the global shell", () => {
   expect(source).toMatch(
     /<SiteHeader\s*\/>[\s\S]*<main id="main">\{children\}<\/main>[\s\S]*<SiteFooter\s*\/>/,
   );
+});
+
+test("mobile header keeps the phone CTA reachable outside the menu panel", () => {
+  const source = readFileSync(
+    join(process.cwd(), "components/layout/SiteHeader.tsx"),
+    "utf8",
+  );
+
+  expect(source).toMatch(/className=\{styles\.mobilePhone\}[\s\S]*href=\{BUSINESS_PHONE_TEL\}/);
+});
+
+test("NavLink marks the current page and nested routes", () => {
+  expect(isCurrentPath("/", "/")).toBe(true);
+  expect(isCurrentPath("/sell", "/")).toBe(false);
+  expect(isCurrentPath("/properties/abc", "/properties")).toBe(true);
+  expect(isCurrentPath("/propertiesx", "/properties")).toBe(false);
+  expect(isCurrentPath(null, "/")).toBe(false);
 });

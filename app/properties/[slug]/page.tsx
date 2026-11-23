@@ -83,7 +83,7 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
   ].filter((fact): fact is { label: string; value: string } => Boolean(fact));
 
   return (
-    <main className={styles.detailPage}>
+    <div className={styles.detailPage}>
       <div className={styles.detailInner}>
         {property.isDevelopmentPlaceholder ? (
           <p className={styles.placeholderBanner}>
@@ -157,6 +157,6 @@ export default async function PropertyPage({ params }: PropertyPageProps) {
           />
         </section>
       </div>
-    </main>
+    </div>
   );
 }

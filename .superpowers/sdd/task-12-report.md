@@ -64,3 +64,15 @@ Email address, office address/map, business hours, Facebook URL, real property i
 - Added a unique ID and `tabindex="-1"` to error `FormStatus` messages across all lead forms.
 - Replaced the manual-focus smoke assertion with an empty seller submission that verifies the browser's resulting active element.
 - Verification: `npx vitest run` (69 passed), `npx tsc --noEmit` (passed), and targeted Playwright forms-smoke + click-budget (6 passed).
+
+---
+
+## Final review fix
+
+- **Mobile phone CTA:** `SiteHeader` renders a persistent `tel:936-208-3019` link (`mobilePhone`) visible at ≤56rem, outside the menu panel; label collapses to "Call" (aria-label keeps the full number) at ≤30rem.
+- **aria-current:** new client `NavLink` (`usePathname`) used in desktop nav (wrapped in `Suspense` with a static fallback, as Cache Components requires for uncovered dynamic params) and `MobileNavigation`. Active state is palette-only (gold underline desktop; navy fill + gold bar mobile).
+- **Nested main:** property detail page now uses `<div>`; added a "Skip to main content" link targeting `#main`.
+- **SITE_URL:** `lib/site.ts` (`SITE_URL`, `normalizeSiteUrl`, `absoluteUrl`; trim, strip trailing slashes, localhost fallback). Used by `sitemap.ts` (now includes available property detail URLs), `robots.ts`, `metadataBase` in layout, and absolute canonical/Open Graph URLs in `buildPageMetadata`.
+- **Focus indicator:** `:focus-visible` is now a 3px navy outline with 2px offset plus a white halo (visible on gold, white, and navy); forced-colors uses `Highlight` outline; footer links use a white outline.
+- **Unchanged / not claimed:** unknown property slugs still render the not-found UI with HTTP 200 + noindex (documented earlier); no financing copy or business facts changed.
+- **Tests:** vitest 74/74 (added `tests/unit/site.test.ts`, nav tests), `tsc --noEmit` clean, `npm run lint` clean, `npm run build` clean, Playwright 12/12 (added aria-current, mobile phone, single-`main` specs). Not tested: real-device/screen-reader checks, forced-colors in a real browser.

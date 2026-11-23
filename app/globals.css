@@ -12,7 +12,9 @@
   --space-7: 4rem;
   --font-sans: var(--font-sans-loaded, "Source Sans 3"), "Segoe UI", sans-serif;
   --font-display: var(--font-display-loaded, "Libre Franklin"), "Segoe UI", sans-serif;
-  --focus-ring: 0 0 0 3px var(--color-gold);
+  --focus-outline-width: 3px;
+  --focus-outline-offset: 2px;
+  --focus-halo: 0 0 0 7px var(--color-white);
   --max-width: 72rem;
 }
 
@@ -54,8 +56,18 @@ a {
 }
 
 :focus-visible {
-  outline: none;
-  box-shadow: var(--focus-ring);
+  /* Navy outline reads on white, neutral, and gold; the white halo keeps it
+     visible on navy. The outline itself survives forced-colors mode. */
+  outline: var(--focus-outline-width) solid var(--color-navy);
+  outline-offset: var(--focus-outline-offset);
+  box-shadow: var(--focus-halo);
+}
+
+@media (forced-colors: active) {
+  :focus-visible {
+    outline-color: Highlight;
+    box-shadow: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

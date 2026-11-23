@@ -43,3 +43,45 @@ test("unseeded property routes render not-found UI and stay out of search indexe
     /noindex/,
   );
 });
+
+test("current page is exposed with aria-current in the desktop nav", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 1280, height: 800 });
+  await page.goto("/sell");
+
+  await expect(
+    page
+      .getByRole("navigation", { name: "Primary navigation" })
+      .locator('a[aria-current="page"]'),
+  ).toHaveText("Sell Your Property");
+});
+
+test("mobile header keeps the phone link visible and marks the current page", async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 375, height: 700 });
+  await page.goto("/financing");
+
+  const phone = page.locator('header a[href="tel:936-208-3019"]:visible');
+  await expect(phone).toHaveCount(1);
+  await expect(phone).toBeVisible();
+
+  await page.getByRole("button", { name: "Menu" }).click();
+  await expect(
+    page
+      .getByRole("navigation", { name: "Mobile navigation" })
+      .locator('a[aria-current="page"]'),
+  ).toHaveText("Financing");
+});
+
+test("property detail pages have a single main landmark", async ({ page }) => {
+  await page.goto("/properties");
+  const href = await page
+    .locator('a[href^="/properties/"]')
+    .first()
+    .getAttribute("href");
+  await page.goto(href ?? "/properties");
+
+  await expect(page.locator("main")).toHaveCount(1);
+});

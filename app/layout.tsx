@@ -4,6 +4,7 @@ import { Libre_Franklin, Source_Sans_3 } from "next/font/google";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { BUSINESS_NAME, TAGLINE } from "@/lib/constants";
+import { SITE_URL } from "@/lib/site";
 
 import "./globals.css";
 
@@ -20,6 +21,7 @@ const libreFranklin = Libre_Franklin({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
     default: BUSINESS_NAME,
     template: `%s | ${BUSINESS_NAME}`,
