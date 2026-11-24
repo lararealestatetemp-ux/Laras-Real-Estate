@@ -1,7 +1,8 @@
 # Properties Search, Filters, Autocomplete & Placeholder Map — Design Spec
 
 **Date:** 2026-11-24  
-**Status:** Approved for planning (pending user review of this document)  
+**Status:** Implemented
+
 **Page:** `/properties`  
 **Sources:** Implementation prompt (simple type filters; no MLS portal), portfolio mockup (search + type filters + grid), stakeholder choices (option B + expanded scope + placeholder map A)
 

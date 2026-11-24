@@ -1,26 +1,25 @@
-# Task 6 Report: Property Detail, Gallery, and Inquiry UI
+# Task 6 Report: Polish, a11y smoke, and docs status
 
 ## Status
 
 Complete.
 
-## Implementation
+## Changes
 
-- Added a static property detail route with listing-derived metadata, development placeholder banner, omitted empty facts, feature list, conditional financing CTA, and `notFound()` handling for missing or unavailable listings.
-- Added an accessible, manual-only property gallery with thumbnail buttons and lazy-loaded non-primary thumbnails.
-- Added shared `FormField`, `FormSelect`, `FormTextarea`, and `FormStatus` components.
-- Added the labeled property inquiry form, honeypot and hidden property slug fields, pending/success/failure feedback, value preservation on failure, and POST submission to `/api/leads/property-inquiry`.
-- Added responsive property detail and form styles using the established CSS variables.
-- Added `generateStaticParams()` so available fixture routes prerender under Next.js Cache Components.
+- Confirmed the existing unit smoke covers autocomplete listbox rendering, ArrowDown highlighting, Enter selection, URL navigation, and Escape dismissal.
+- Added a regression test proving Enter submits once and cancels the pending debounced URL update.
+- Stabilized the router test mock to match Next.js hook identity and expose the duplicate-push regression.
+- Cleared pending search timers on immediate query commits.
+- Marked the properties discovery design spec as Implemented.
 
 ## Verification
 
-- `npx vitest run`: 28 tests passed.
-- `npm run lint`: passed.
-- `npm run build`: passed; all three available property details prerendered.
-- Browser verification: desktop and 390px layouts had no horizontal overflow; mobile form controls were at least 44px high with 16px input text.
+- TDD regression: failed with two URL pushes before the fix, then passed with one.
+- `npx vitest run tests/unit/properties/`: 4 files, 38 tests passed.
+- ESLint passed for both changed TypeScript files.
+- IDE lint diagnostics: none.
+- `git diff --check`: passed.
 
 ## Concerns
 
-- The inquiry endpoint is intentionally absent until Task 8; unit tests verify both successful and failed POST responses with mocked requests.
-- The remote Picsum fixture image did not load during local browser verification, while explicit dimensions preserved the gallery layout. Production imagery remains outside this task.
+None.

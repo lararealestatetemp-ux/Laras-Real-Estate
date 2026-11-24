@@ -93,6 +93,7 @@ export function PropertyDiscoveryToolbar() {
   const [activeIndex, setActiveIndex] = useState(-1);
   // The query this component last pushed (or received from the URL).
   const committedQuery = useRef(urlQuery.trim());
+  const pendingSearchTimer = useRef<number | null>(null);
 
   // Sync the field from the URL only for external navigation (e.g.
   // back/forward). URL changes we pushed ourselves must not overwrite typing.
@@ -112,7 +113,15 @@ export function PropertyDiscoveryToolbar() {
     router.push(query ? `${pathname}?${query}` : pathname);
   }
 
+  function clearPendingSearchCommit() {
+    if (pendingSearchTimer.current !== null) {
+      window.clearTimeout(pendingSearchTimer.current);
+      pendingSearchTimer.current = null;
+    }
+  }
+
   function commitQuery(value: string) {
+    clearPendingSearchCommit();
     const trimmed = value.trim();
     committedQuery.current = trimmed;
     navigate(withParam(searchParams, "q", trimmed));
@@ -126,12 +135,19 @@ export function PropertyDiscoveryToolbar() {
     }
 
     const timer = window.setTimeout(() => {
+      pendingSearchTimer.current = null;
       committedQuery.current = trimmed;
       const query = withParam(searchParams, "q", trimmed).toString();
       router.push(query ? `${pathname}?${query}` : pathname);
     }, SEARCH_DEBOUNCE_MS);
+    pendingSearchTimer.current = timer;
 
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      if (pendingSearchTimer.current === timer) {
+        pendingSearchTimer.current = null;
+      }
+    };
   }, [draftQ, pathname, router, searchParams]);
 
   const suggestions = useMemo(() => {

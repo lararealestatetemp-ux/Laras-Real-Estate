@@ -10,12 +10,13 @@ import { PropertyFilters } from "@/components/property/PropertyFilters";
 import type { Property } from "@/lib/properties/types";
 
 const push = vi.fn();
+const router = { push };
 let currentParams = new URLSearchParams();
 const hadScrollIntoView = "scrollIntoView" in Element.prototype;
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/properties",
-  useRouter: () => ({ push }),
+  useRouter: () => router,
   useSearchParams: () => currentParams,
 }));
 
@@ -138,6 +139,27 @@ test("discovery toolbar debounces search by 300ms", () => {
     });
     expect(push).toHaveBeenCalledTimes(1);
     expect(push).toHaveBeenCalledWith("/properties?q=lot");
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("discovery toolbar cancels pending debounce when Enter submits", () => {
+  vi.useFakeTimers();
+  try {
+    render(createElement(PropertyFilters));
+
+    const input = screen.getByRole("searchbox", { name: /search properties/i });
+    fireEvent.change(input, { target: { value: "lot" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith("/properties?q=lot");
+
+    act(() => {
+      vi.advanceTimersByTime(300);
+    });
+    expect(push).toHaveBeenCalledTimes(1);
   } finally {
     vi.useRealTimers();
   }
