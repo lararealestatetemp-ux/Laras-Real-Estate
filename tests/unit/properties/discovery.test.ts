@@ -119,4 +119,17 @@ describe("getDiscoverySuggestions", () => {
       }),
     ).toEqual([]);
   });
+
+  test("returns empty when limit is zero or negative", () => {
+    const filters = {
+      q: "sample",
+      type: "all" as const,
+      price: null,
+      beds: null,
+      baths: null,
+    };
+
+    expect(getDiscoverySuggestions(filters, 0)).toEqual([]);
+    expect(getDiscoverySuggestions(filters, -1)).toEqual([]);
+  });
 });

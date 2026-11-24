@@ -1,18 +1,37 @@
 import { createElement } from "react";
 import "@testing-library/jest-dom/vitest";
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import {
+  act,
+  createEvent,
+  fireEvent,
+  render, screen,
+  waitFor,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
 import PropertiesPage, { PropertyListing } from "@/app/properties/page";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { PropertyFilters } from "@/components/property/PropertyFilters";
+import type * as QueriesModule from "@/lib/properties/queries";
 import type { Property } from "@/lib/properties/types";
 
 const push = vi.fn();
-const router = { push };
+const replace = vi.fn();
+const router = { push, replace };
 let currentParams = new URLSearchParams();
 const hadScrollIntoView = "scrollIntoView" in Element.prototype;
+
+const queriesOverride = vi.hoisted(() => ({ empty: false }));
+
+vi.mock("@/lib/properties/queries", async (importOriginal) => {
+  const actual = await importOriginal<typeof QueriesModule>();
+  return {
+    ...actual,
+    getAvailableProperties: () =>
+      queriesOverride.empty ? [] : actual.getAvailableProperties(),
+  };
+});
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/properties",
@@ -37,6 +56,8 @@ const property: Property = {
 
 beforeEach(() => {
   push.mockReset();
+  replace.mockReset();
+  queriesOverride.empty = false;
   currentParams = new URLSearchParams();
 });
 
@@ -84,10 +105,10 @@ test("property filters expose all categories and update the URL", async () => {
   ).toEqual(["All", "Houses", "Land", "Commercial"]);
 
   await user.click(screen.getByRole("button", { name: "Land" }));
-  expect(push).toHaveBeenCalledWith("/properties?type=land");
+  expect(push).toHaveBeenCalledWith("/properties?type=land", { scroll: false });
 
   await user.click(screen.getByRole("button", { name: "All" }));
-  expect(push).toHaveBeenCalledWith("/properties");
+  expect(push).toHaveBeenCalledWith("/properties", { scroll: false });
 });
 
 test("discovery toolbar exposes search and secondary filters", async () => {
@@ -98,7 +119,7 @@ test("discovery toolbar exposes search and secondary filters", async () => {
   );
 
   expect(
-    screen.getByRole("searchbox", { name: /search properties/i }),
+    screen.getByRole("combobox", { name: /search properties/i }),
   ).toBeInTheDocument();
   expect(screen.getByLabelText(/price/i)).toBeInTheDocument();
   expect(screen.getByLabelText(/^beds$/i)).toBeInTheDocument();
@@ -112,10 +133,15 @@ test("discovery toolbar updates URL for selects and preserves other params", asy
   render(createElement(PropertyFilters));
 
   await user.selectOptions(screen.getByLabelText(/^beds$/i), "3");
-  expect(push).toHaveBeenLastCalledWith("/properties?type=house&q=lot&beds=3");
+  expect(push).toHaveBeenLastCalledWith(
+    "/properties?type=house&q=lot&beds=3",
+    { scroll: false },
+  );
 
   await user.selectOptions(screen.getByLabelText(/^beds$/i), "");
-  expect(push).toHaveBeenLastCalledWith("/properties?type=house&q=lot");
+  expect(push).toHaveBeenLastCalledWith("/properties?type=house&q=lot", {
+    scroll: false,
+  });
 });
 
 test("discovery toolbar debounces search by 300ms", () => {
@@ -124,21 +150,22 @@ test("discovery toolbar debounces search by 300ms", () => {
     render(createElement(PropertyFilters));
 
     // fireEvent avoids user-event's internal timers, which hang under fake timers.
-    const input = screen.getByRole("searchbox", { name: /search properties/i });
+    const input = screen.getByRole("combobox", { name: /search properties/i });
     fireEvent.change(input, { target: { value: "lot" } });
 
-    expect(push).not.toHaveBeenCalled();
+    expect(replace).not.toHaveBeenCalled();
 
     act(() => {
       vi.advanceTimersByTime(299);
     });
-    expect(push).not.toHaveBeenCalled();
+    expect(replace).not.toHaveBeenCalled();
 
     act(() => {
       vi.advanceTimersByTime(1);
     });
-    expect(push).toHaveBeenCalledTimes(1);
-    expect(push).toHaveBeenCalledWith("/properties?q=lot");
+    expect(replace).toHaveBeenCalledTimes(1);
+    expect(push).not.toHaveBeenCalled();
+    expect(replace).toHaveBeenCalledWith("/properties?q=lot", { scroll: false });
   } finally {
     vi.useRealTimers();
   }
@@ -149,17 +176,18 @@ test("discovery toolbar cancels pending debounce when Enter submits", () => {
   try {
     render(createElement(PropertyFilters));
 
-    const input = screen.getByRole("searchbox", { name: /search properties/i });
+    const input = screen.getByRole("combobox", { name: /search properties/i });
     fireEvent.change(input, { target: { value: "lot" } });
     fireEvent.keyDown(input, { key: "Enter" });
 
     expect(push).toHaveBeenCalledTimes(1);
-    expect(push).toHaveBeenCalledWith("/properties?q=lot");
+    expect(push).toHaveBeenCalledWith("/properties?q=lot", { scroll: false });
 
     act(() => {
       vi.advanceTimersByTime(300);
     });
     expect(push).toHaveBeenCalledTimes(1);
+    expect(replace).not.toHaveBeenCalled();
   } finally {
     vi.useRealTimers();
   }
@@ -169,9 +197,11 @@ test("discovery toolbar keeps typing when the URL echoes a committed query", asy
   const user = userEvent.setup();
   const view = render(createElement(PropertyFilters));
 
-  const input = screen.getByRole("searchbox", { name: /search properties/i });
+  const input = screen.getByRole("combobox", { name: /search properties/i });
   await user.type(input, "a");
-  await waitFor(() => expect(push).toHaveBeenCalledWith("/properties?q=a"));
+  await waitFor(() =>
+    expect(replace).toHaveBeenCalledWith("/properties?q=a", { scroll: false }),
+  );
 
   // User keeps typing while the pushed URL arrives.
   await user.type(input, "b");
@@ -191,17 +221,17 @@ test("discovery toolbar preserves q=all as a search term", async () => {
   render(createElement(PropertyFilters));
 
   await user.type(
-    screen.getByRole("searchbox", { name: /search properties/i }),
+    screen.getByRole("combobox", { name: /search properties/i }),
     "all{Enter}",
   );
-  expect(push).toHaveBeenLastCalledWith("/properties?q=all");
+  expect(push).toHaveBeenLastCalledWith("/properties?q=all", { scroll: false });
 });
 
 test("discovery toolbar offers keyboard autocomplete and closes on Escape", async () => {
   const user = userEvent.setup();
   render(createElement(PropertyFilters));
 
-  const input = screen.getByRole("searchbox", { name: /search properties/i });
+  const input = screen.getByRole("combobox", { name: /search properties/i });
   await user.type(input, "a");
 
   const listbox = await screen.findByRole("listbox");
@@ -209,12 +239,15 @@ test("discovery toolbar offers keyboard autocomplete and closes on Escape", asyn
   expect(listbox).toBeInTheDocument();
   expect(options.length).toBeGreaterThan(0);
   expect(input).toHaveAttribute("aria-controls", listbox.id);
+  expect(input).toHaveAttribute("aria-expanded", "true");
+  expect(input).toHaveAttribute("aria-haspopup", "listbox");
 
   await user.keyboard("{ArrowDown}");
   expect(input).toHaveAttribute("aria-activedescendant", options[0].id);
   await user.keyboard("{Enter}");
   expect(push).toHaveBeenCalledWith(
     `/properties?${new URLSearchParams({ q: options[0].textContent ?? "" })}`,
+    { scroll: false },
   );
   expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 });
@@ -223,12 +256,20 @@ test("discovery toolbar closes the listbox on Escape without selecting", async (
   const user = userEvent.setup();
   render(createElement(PropertyFilters));
 
-  const input = screen.getByRole("searchbox", { name: /search properties/i });
+  const input = screen.getByRole("combobox", { name: /search properties/i });
   await user.type(input, "a");
   expect(await screen.findByRole("listbox")).toBeInTheDocument();
 
-  await user.keyboard("{Escape}");
+  const escape = createEvent.keyDown(input, { key: "Escape" });
+  fireEvent(input, escape);
+  expect(escape.defaultPrevented).toBe(true);
   expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+  expect(input).toHaveAttribute("aria-expanded", "false");
+
+  // With the list closed, Escape is left to the browser.
+  const secondEscape = createEvent.keyDown(input, { key: "Escape" });
+  fireEvent(input, secondEscape);
+  expect(secondEscape.defaultPrevented).toBe(false);
 });
 
 test("properties page shows the hero and available cards", async () => {
@@ -333,4 +374,19 @@ test("placeholder map stays visible with empty note when nothing matches", async
   ).toBeInTheDocument();
   expect(screen.getByText("No listings match.")).toBeInTheDocument();
   expect(screen.queryAllByRole("button", { name: /view .* on listing/i })).toHaveLength(0);
+});
+
+test("listing shows empty inventory message when nothing is available and no filters are active", async () => {
+  queriesOverride.empty = true;
+
+  render(await PropertyListing({ searchParams: Promise.resolve({}) }));
+
+  expect(
+    screen.getByText("No properties available right now."),
+  ).toBeInTheDocument();
+  expect(
+    screen.queryByText("No properties match your search."),
+  ).not.toBeInTheDocument();
+  expect(screen.queryAllByRole("article")).toHaveLength(0);
+  expect(screen.getByText("No listings match.")).toBeInTheDocument();
 });

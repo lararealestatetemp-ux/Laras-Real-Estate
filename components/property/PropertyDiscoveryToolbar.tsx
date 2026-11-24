@@ -108,9 +108,12 @@ export function PropertyDiscoveryToolbar() {
     setDraftQ(urlQuery);
   }, [urlQuery]);
 
+  // Navigation policy: discrete actions (Enter, suggestion pick, type
+  // buttons, selects) use push so they create history entries; debounced
+  // typing uses replace so each keystroke does not. Neither scrolls the page.
   function navigate(params: URLSearchParams) {
     const query = params.toString();
-    router.push(query ? `${pathname}?${query}` : pathname);
+    router.push(query ? `${pathname}?${query}` : pathname, { scroll: false });
   }
 
   function clearPendingSearchCommit() {
@@ -138,7 +141,9 @@ export function PropertyDiscoveryToolbar() {
       pendingSearchTimer.current = null;
       committedQuery.current = trimmed;
       const query = withParam(searchParams, "q", trimmed).toString();
-      router.push(query ? `${pathname}?${query}` : pathname);
+      router.replace(query ? `${pathname}?${query}` : pathname, {
+        scroll: false,
+      });
     }, SEARCH_DEBOUNCE_MS);
     pendingSearchTimer.current = timer;
 
@@ -214,6 +219,10 @@ export function PropertyDiscoveryToolbar() {
         return;
       }
       case "Escape": {
+        if (showList) {
+          // Keep the browser from clearing the search field (and `q`).
+          event.preventDefault();
+        }
         setIsOpen(false);
         setActiveIndex(-1);
         return;
@@ -237,10 +246,13 @@ export function PropertyDiscoveryToolbar() {
           id={searchId}
           className={styles.searchInput}
           type="search"
+          role="combobox"
           value={draftQ}
           autoComplete="off"
           placeholder="Title or location"
           aria-autocomplete="list"
+          aria-expanded={showList}
+          aria-haspopup="listbox"
           aria-controls={showList ? listboxId : undefined}
           aria-activedescendant={
             showList && activeIndex >= 0 ? optionId(activeIndex) : undefined
@@ -271,6 +283,20 @@ export function PropertyDiscoveryToolbar() {
             ))}
           </ul>
         ) : null}
+      </div>
+
+      <div className={styles.filters} role="group" aria-label="Filter properties">
+        {TYPE_FILTERS.map((filter) => (
+          <button
+            className={styles.filterButton}
+            key={filter.value}
+            type="button"
+            aria-pressed={activeType === filter.value}
+            onClick={() => navigate(withParam(searchParams, "type", filter.value))}
+          >
+            {filter.label}
+          </button>
+        ))}
       </div>
 
       <div className={styles.filterSelects}>
@@ -325,20 +351,6 @@ export function PropertyDiscoveryToolbar() {
             ))}
           </select>
         </div>
-      </div>
-
-      <div className={styles.filters} role="group" aria-label="Filter properties">
-        {TYPE_FILTERS.map((filter) => (
-          <button
-            className={styles.filterButton}
-            key={filter.value}
-            type="button"
-            aria-pressed={activeType === filter.value}
-            onClick={() => navigate(withParam(searchParams, "type", filter.value))}
-          >
-            {filter.label}
-          </button>
-        ))}
       </div>
     </div>
   );

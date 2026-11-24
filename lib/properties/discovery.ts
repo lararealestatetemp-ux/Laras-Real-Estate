@@ -129,7 +129,7 @@ export function getDiscoverySuggestions(
   limit = 6,
 ): string[] {
   const needle = filters.q.trim().toLowerCase();
-  if (!needle) {
+  if (!needle || limit <= 0) {
     return [];
   }
 
