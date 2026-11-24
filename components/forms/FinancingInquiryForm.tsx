@@ -9,7 +9,16 @@ import { FormTextarea } from "./FormTextarea";
 import { Honeypot } from "./Honeypot";
 import { useLeadForm } from "./useLeadForm";
 
-export function FinancingInquiryForm() {
+type PropertyOption = {
+  slug: string;
+  title: string;
+};
+
+export function FinancingInquiryForm({
+  properties,
+}: {
+  properties: PropertyOption[];
+}) {
   const { status, statusId, error, fieldErrors, handleSubmit } =
     useLeadForm("/api/leads/contact");
 
@@ -19,7 +28,7 @@ export function FinancingInquiryForm() {
         <FormField
           id="financing-first-name"
           name="firstName"
-          label="First name"
+          label="First Name"
           autoComplete="given-name"
           error={fieldErrors.firstName}
           required
@@ -27,36 +36,55 @@ export function FinancingInquiryForm() {
         <FormField
           id="financing-last-name"
           name="lastName"
-          label="Last name"
+          label="Last Name"
           autoComplete="family-name"
           error={fieldErrors.lastName}
           required
         />
-        <FormField
-          id="financing-email"
-          name="email"
-          label="Email"
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          spellCheck={false}
-          error={fieldErrors.email}
-          required
-        />
-        <FormField
-          id="financing-phone"
-          name="phone"
-          label="Phone"
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          error={fieldErrors.phone}
-        />
+      </div>
+      <FormField
+        id="financing-phone"
+        name="phone"
+        label="Phone"
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel"
+        error={fieldErrors.phone}
+      />
+      <FormField
+        id="financing-email"
+        name="email"
+        label="Email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        spellCheck={false}
+        error={fieldErrors.email}
+        required
+      />
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="financing-property">
+          Property of Interest
+        </label>
+        <select
+          className={styles.control}
+          id="financing-property"
+          name="propertyInterest"
+          defaultValue=""
+        >
+          <option value="">Select a property (optional)</option>
+          {properties.map((property) => (
+            <option key={property.slug} value={property.title}>
+              {property.title}
+            </option>
+          ))}
+        </select>
       </div>
       <FormTextarea
         id="financing-message"
         name="message"
-        label="Message"
+        label="Additional Information"
+        placeholder="Tell us about your interest..."
         rows={5}
         error={fieldErrors.message}
         required
@@ -68,7 +96,7 @@ export function FinancingInquiryForm() {
           {status === "pending" ? (
             <span className={styles.spinner} aria-hidden="true" />
           ) : null}
-          Send Inquiry
+          Submit Inquiry →
         </PrimaryButton>
         <FormStatus
           id={statusId}

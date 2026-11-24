@@ -218,7 +218,7 @@
 .detailHeader {
   display: grid;
   gap: var(--space-2);
-  margin-bottom: var(--space-5);
+  margin: var(--space-5) 0 var(--space-4);
 }
 
 .detailHeader h1,
@@ -228,49 +228,66 @@
 
 .detailHeader h1 {
   max-width: 48rem;
-  font-size: clamp(2rem, 6vw, 3.5rem);
-  line-height: 1.1;
+  color: var(--color-navy);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  line-height: 1.15;
   text-wrap: balance;
 }
 
-.detailType {
-  width: fit-content;
-  padding: var(--space-1) var(--space-2);
-  font-weight: 700;
-  text-transform: capitalize;
-  background: var(--color-neutral);
+.detailPriceRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-3);
+}
+
+.detailPriceRow .financingBadge {
+  margin: 0;
+  margin-left: auto;
 }
 
 .detailPrice {
-  font-size: 1.5rem;
+  color: var(--color-gold);
+  font-size: clamp(1.5rem, 3vw, 2rem);
   font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 .gallery {
   display: grid;
-  gap: var(--space-3);
+  grid-template-columns: minmax(0, 1.65fr) minmax(10rem, 0.7fr);
+  gap: var(--space-2);
+}
+
+.galleryPrimaryWrap {
+  min-width: 0;
 }
 
 .galleryPrimary {
   width: 100%;
-  aspect-ratio: 3 / 2;
+  height: 100%;
+  min-height: 16rem;
+  aspect-ratio: 4 / 3;
   object-fit: cover;
   border-radius: var(--space-1);
 }
 
-.galleryThumbnails {
+.gallerySide {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(5rem, 8rem));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
   gap: var(--space-2);
+  min-height: 16rem;
 }
 
 .galleryThumbnailButton {
+  position: relative;
   min-width: 2.75rem;
   min-height: 2.75rem;
-  padding: var(--space-1);
-  background: var(--color-white);
-  border: 2px solid var(--color-neutral);
+  padding: 0;
+  overflow: hidden;
+  background: var(--color-neutral);
+  border: 2px solid transparent;
   border-radius: var(--space-1);
   cursor: pointer;
   touch-action: manipulation;
@@ -283,9 +300,20 @@
 
 .galleryThumbnail {
   width: 100%;
-  aspect-ratio: 3 / 2;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--space-1);
+  display: block;
+}
+
+.galleryMoreBadge {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-white);
+  font-weight: 700;
+  background: var(--color-navy);
+  pointer-events: none;
 }
 
 .galleryEmpty {
@@ -295,11 +323,50 @@
   background: var(--color-neutral);
 }
 
+.basicDetails {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-3) var(--space-4);
+  margin: 0 0 var(--space-5);
+  padding: var(--space-4) 0;
+  list-style: none;
+  border-block: 1px solid var(--color-gold);
+}
+
+.basicDetails li {
+  display: grid;
+  flex: 1 1 0;
+  gap: var(--space-1);
+  min-width: 5.5rem;
+  text-align: center;
+  justify-items: center;
+}
+
+.basicIcon {
+  color: var(--color-gold);
+}
+
+.basicLabel {
+  color: var(--color-navy);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.basicValue {
+  color: var(--color-navy);
+  font-size: 1.0625rem;
+  text-transform: capitalize;
+}
+
 .detailColumns {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(15rem, 1fr);
   gap: var(--space-6);
-  margin-top: var(--space-6);
+  margin-top: var(--space-2);
 }
 
 .detailContent h2,
@@ -313,38 +380,31 @@
   text-wrap: pretty;
 }
 
-.facts {
+.features {
+  margin-top: var(--space-5);
+}
+
+.featureList {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: var(--space-2);
-  margin: var(--space-5) 0;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-2) var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.fact {
-  padding: var(--space-3);
-  background: var(--color-neutral);
+.featureList li {
+  position: relative;
+  padding-left: 1.5rem;
+  color: var(--color-navy);
 }
 
-.fact dt {
+.featureList li::before {
+  position: absolute;
+  left: 0;
+  content: "✓";
+  color: var(--color-gold);
   font-weight: 700;
-}
-
-.fact dd {
-  margin: var(--space-1) 0 0;
-  font-variant-numeric: tabular-nums;
-}
-
-.fact dd:first-letter {
-  text-transform: uppercase;
-}
-
-.features ul {
-  padding-left: var(--space-4);
-  margin-bottom: 0;
-}
-
-.features li + li {
-  margin-top: var(--space-2);
 }
 
 .detailActions {
@@ -355,6 +415,17 @@
   padding: var(--space-4);
   background: var(--color-neutral);
   border-top: var(--space-1) solid var(--color-gold);
+  height: fit-content;
+}
+
+.detailActionsNote {
+  margin: var(--space-2) 0 0;
+  font-size: 0.9375rem;
+}
+
+.detailActionsNote a {
+  color: var(--color-navy);
+  font-weight: 700;
 }
 
 .inquiry {
@@ -374,6 +445,24 @@
 }
 
 @media (max-width: 48rem) {
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .gallerySide {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-rows: none;
+    min-height: 0;
+  }
+
+  .galleryThumbnail {
+    aspect-ratio: 3 / 2;
+  }
+
+  .featureList {
+    grid-template-columns: 1fr;
+  }
+
   .detailColumns,
   .inquiry {
     grid-template-columns: 1fr;
@@ -382,115 +471,5 @@
 
   .inquiry {
     padding: var(--space-4);
-  }
-}
-
-.discoveryLayout {
-  display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(16rem, 0.8fr);
-  gap: var(--space-5);
-  align-items: start;
-  margin-bottom: var(--space-5);
-}
-
-.mapPanel {
-  position: sticky;
-  top: var(--space-4);
-  padding: var(--space-3);
-  background: var(--color-neutral);
-  border: 1px solid var(--color-gold);
-  border-radius: var(--space-1);
-}
-
-.mapNote {
-  margin: 0 0 var(--space-2);
-  padding: var(--space-1) var(--space-2);
-  color: var(--color-navy);
-  font-weight: 700;
-  background: var(--color-white);
-  border-left: var(--space-1) solid var(--color-gold);
-}
-
-.mapSurface {
-  position: relative;
-  min-height: 18rem;
-  overflow: hidden;
-  background: var(--color-neutral);
-  border-radius: var(--space-1);
-}
-
-.mapSurface::before {
-  position: absolute;
-  inset: 0;
-  content: "";
-  pointer-events: none;
-  background:
-    repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 23px,
-      var(--color-navy) 24px
-    ),
-    repeating-linear-gradient(
-      90deg,
-      transparent,
-      transparent 23px,
-      var(--color-navy) 24px
-    );
-  opacity: 0.08;
-}
-
-/* 2.75rem invisible hit area; the visible teardrop is drawn by ::before. */
-.mapPin {
-  position: absolute;
-  display: block;
-  width: 2.75rem;
-  height: 2.75rem;
-  margin: 0;
-  padding: 0;
-  background: transparent;
-  border: 0;
-  transform: translate(-50%, -100%);
-  cursor: pointer;
-}
-
-.mapPin::before {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 1.5rem;
-  height: 1.5rem;
-  content: "";
-  background: var(--color-gold);
-  border: 2px solid var(--color-navy);
-  border-radius: 50% 50% 50% 0;
-  transform: translate(-50%, -50%) rotate(-45deg);
-}
-
-.mapPin:focus-visible {
-  outline: var(--focus-outline-width) solid var(--color-navy);
-  outline-offset: calc(-1 * var(--space-1));
-  box-shadow: inset 0 0 0 calc(var(--focus-outline-width) + 1px)
-    var(--color-white);
-}
-
-.mapPin:focus-visible::before {
-  background: var(--color-navy);
-  border-color: var(--color-gold);
-}
-
-.mapEmpty {
-  margin: var(--space-2) 0 0;
-  color: var(--color-navy);
-}
-
-@media (max-width: 48rem) {
-  .discoveryLayout {
-    grid-template-columns: 1fr;
-  }
-
-  .mapPanel {
-    position: static;
-    order: -1;
   }
 }

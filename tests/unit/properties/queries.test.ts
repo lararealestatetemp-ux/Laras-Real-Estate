@@ -75,11 +75,18 @@ describe("property queries", () => {
           property.isDevelopmentPlaceholder === true &&
           property.images.length > 0 &&
           property.images.every((image) =>
-            /^\/images\/properties\/placeholder-[a-z0-9-]+\.jpg$/.test(
+            /^\/images\/properties\/(placeholder|gallery)-[a-z0-9-]+\.jpg$/.test(
               image.src,
             ),
           ),
       ),
     ).toBe(true);
+  });
+
+  test("featured house listing includes a multi-image gallery", () => {
+    const house = getPropertyBySlug("placeholder-family-house");
+
+    expect(house?.title).toBe("Modern Home in Livingston");
+    expect(house?.images.length).toBeGreaterThanOrEqual(4);
   });
 });

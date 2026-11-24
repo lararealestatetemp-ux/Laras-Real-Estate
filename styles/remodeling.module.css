@@ -3,39 +3,77 @@
 }
 
 .section,
-.consultation {
+.mainSection {
   width: min(calc(100% - (var(--space-3) * 2)), var(--max-width));
   margin-inline: auto;
   padding-top: var(--space-6);
 }
 
-.sectionHeader {
-  max-width: 44rem;
+.mainSection {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(18rem, 0.95fr);
+  gap: var(--space-6);
+  align-items: start;
 }
 
-.sectionHeader h2,
-.sectionHeader p {
-  margin-block: 0 var(--space-3);
+.leftColumn {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+.servicesColumn h2,
+.beforeAfterBlock h2 {
+  margin: 0 0 var(--space-2);
+  color: var(--color-navy);
+  font-size: clamp(1.75rem, 3vw, 2.25rem);
+}
+
+.beforeAfterBlock h2 {
+  margin-bottom: var(--space-3);
+}
+
+.beforeAfterBlock .disclosure {
+  margin-bottom: var(--space-4);
+}
+
+.servicesNote {
+  max-width: 36rem;
+  margin: 0 0 var(--space-4);
+  color: var(--color-navy);
 }
 
 .servicesList {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr));
-  gap: var(--space-3);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: var(--space-5);
+  row-gap: var(--space-3);
   padding: 0;
-  margin: var(--space-4) 0 0;
+  margin: 0;
   list-style: none;
 }
 
 .service {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-navy);
+  font-size: 1.0625rem;
+  font-weight: 600;
+}
+
+.serviceCheck {
   display: grid;
-  align-content: start;
-  gap: var(--space-3);
-  padding: var(--space-4);
-  font-size: 1.125rem;
+  flex-shrink: 0;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  color: var(--color-white);
+  font-size: 0.8125rem;
   font-weight: 700;
-  background: var(--color-neutral);
-  border-top: var(--space-1) solid var(--color-gold);
+  line-height: 1;
+  background: var(--color-gold);
+  border-radius: 0.25rem;
 }
 
 .approvalLabel,
@@ -48,8 +86,12 @@
   border-left: var(--space-1) solid var(--color-gold);
 }
 
+.carousel {
+  position: relative;
+}
+
 .comparison {
-  margin: var(--space-4) 0 0;
+  margin: 0;
 }
 
 .disclosure {
@@ -87,23 +129,57 @@
   object-fit: cover;
 }
 
-.consultation {
+.carouselControls {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-4);
+}
+
+.carouselArrow {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
-  gap: var(--space-6);
-}
-
-.consultationCopy h2,
-.consultationCopy p {
-  margin-block: 0 var(--space-3);
-}
-
-.phoneLink {
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
   color: var(--color-navy);
-  font-weight: 700;
+  background: var(--color-white);
+  border: 2px solid var(--color-navy);
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.carouselArrow:hover {
+  color: var(--color-white);
+  background: var(--color-navy);
+}
+
+.carouselDots {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.carouselDot {
+  width: 0.75rem;
+  height: 0.75rem;
+  padding: 0;
+  background: var(--color-navy);
+  border: 2px solid var(--color-navy);
+  border-radius: 999px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.carouselDot[aria-selected="true"] {
+  background: var(--color-gold);
+  border-color: var(--color-gold);
 }
 
 .formPanel {
+  position: sticky;
+  top: var(--space-4);
   padding: var(--space-5);
   background: var(--color-neutral);
   border: 1px solid var(--color-gold);
@@ -111,13 +187,25 @@
   scroll-margin-top: var(--space-6);
 }
 
+.formIntro h2 {
+  margin: 0 0 var(--space-2);
+  color: var(--color-navy);
+  font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+}
+
+.formIntro p {
+  margin: 0 0 var(--space-4);
+  color: var(--color-navy);
+}
+
 @media (max-width: 48rem) {
+  .mainSection,
   .imageGrid,
-  .consultation {
+  .servicesList {
     grid-template-columns: 1fr;
   }
 
-  .consultation {
+  .mainSection {
     gap: var(--space-4);
   }
 

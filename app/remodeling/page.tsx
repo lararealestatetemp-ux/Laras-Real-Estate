@@ -1,8 +1,7 @@
 import { ConsultationForm } from "@/components/forms/ConsultationForm";
-import { BeforeAfterPair } from "@/components/remodeling/BeforeAfterPair";
+import { BeforeAfterCarousel } from "@/components/remodeling/BeforeAfterCarousel";
 import { ServicesList } from "@/components/remodeling/ServicesList";
 import { PageHero } from "@/components/ui/PageHero";
-import { BUSINESS_PHONE, BUSINESS_PHONE_TEL } from "@/lib/constants";
 import {
   BEFORE_AFTER_PLACEHOLDERS,
   REMODELING_SERVICE_PLACEHOLDERS,
@@ -26,54 +25,37 @@ export default function RemodelingPage() {
         imageAlt="Development placeholder stock photo: renovated interior living space"
       />
 
-      <section className={styles.section} aria-labelledby="services-title">
-        <div className={styles.sectionHeader}>
-          <h2 id="services-title">Services under consideration</h2>
-          <p>
-            These placeholder service categories are shown for planning and
-            require owner approval before they are presented as available
-            services.
-          </p>
-        </div>
-        <ServicesList services={REMODELING_SERVICE_PLACEHOLDERS} />
-      </section>
+      <section className={styles.mainSection} aria-label="Services and consultation">
+        <div className={styles.leftColumn}>
+          <div className={styles.servicesColumn}>
+            <h2 id="services-title">Our Services</h2>
+            <p className={styles.servicesNote}>
+              Provisional service categories for planning. Final offerings
+              require owner approval.
+            </p>
+            <ServicesList services={REMODELING_SERVICE_PLACEHOLDERS} />
+          </div>
 
-      <section className={styles.section} aria-labelledby="examples-title">
-        <div className={styles.sectionHeader}>
-          <h2 id="examples-title">Before and after examples</h2>
-          <p>
-            The following images demonstrate the intended presentation only.
-          </p>
+          <div className={styles.beforeAfterBlock} aria-labelledby="examples-title">
+            <h2 id="examples-title">Before &amp; After</h2>
+            <p className={styles.disclosure}>
+              Placeholder imagery — not completed Laras Real Estate projects
+            </p>
+            <BeforeAfterCarousel pairs={BEFORE_AFTER_PLACEHOLDERS} />
+          </div>
         </div>
-        {BEFORE_AFTER_PLACEHOLDERS.map((pair) => (
-          <BeforeAfterPair
-            key={pair.id}
-            before={pair.before}
-            after={pair.after}
-          />
-        ))}
-      </section>
 
-      <section
-        className={styles.consultation}
-        aria-labelledby="consultation-title"
-      >
-        <div className={styles.consultationCopy}>
-          <h2 id="consultation-title">Request a consultation</h2>
-          <p>
-            Tell us about the project you are considering and how to reach you.
-          </p>
-          <p>
-            You can also call{" "}
-            <a className={styles.phoneLink} href={BUSINESS_PHONE_TEL}>
-              {BUSINESS_PHONE}
-            </a>
-            .
-          </p>
-        </div>
-        <div className={styles.formPanel} id="consultation">
+        <aside
+          className={styles.formPanel}
+          id="consultation"
+          aria-labelledby="consultation-title"
+        >
+          <div className={styles.formIntro}>
+            <h2 id="consultation-title">Request Consultation</h2>
+            <p>Tell us about your project and we will get back to you.</p>
+          </div>
           <ConsultationForm />
-        </div>
+        </aside>
       </section>
     </div>
   );

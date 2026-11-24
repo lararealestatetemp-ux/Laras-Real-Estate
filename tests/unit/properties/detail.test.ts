@@ -141,14 +141,20 @@ test("property detail renders listing facts, inquiry, and financing when availab
   expect(
     screen.getByRole("heading", {
       level: 1,
-      name: "Placeholder Family House",
+      name: "Modern Home in Livingston",
     }),
   ).toBeInTheDocument();
-  expect(screen.getByText("Development placeholder listing")).toBeInTheDocument();
-  expect(screen.getByRole("link", { name: "Learn About Financing" })).toHaveAttribute(
-    "href",
-    "/financing",
-  );
+  expect(screen.getByText(/\$285,000/)).toBeInTheDocument();
+  expect(screen.getByRole("list", { name: /basic details/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { level: 2, name: "Property features" }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("link", { name: "Contact About This Property" }),
+  ).toHaveAttribute("href", "#inquiry");
+  expect(
+    screen.getByRole("link", { name: "Apply for Financing" }),
+  ).toHaveAttribute("href", "/financing#financing-inquiry");
   expect(
     screen.getByRole("heading", { level: 2, name: "Ask About This Property" }),
   ).toBeInTheDocument();
@@ -164,7 +170,7 @@ test("property detail omits financing when owner financing is unavailable", asyn
   render(page);
 
   expect(
-    screen.queryByRole("link", { name: "Learn About Financing" }),
+    screen.queryByRole("link", { name: "Apply for Financing" }),
   ).not.toBeInTheDocument();
 });
 
@@ -199,9 +205,8 @@ test("property metadata uses only the listing title and description", async () =
     }),
   ).resolves.toEqual(
     expect.objectContaining({
-      title: "Placeholder Family House",
-      description:
-        "Development-only house listing used to preview the property experience.",
+      title: "Modern Home in Livingston",
+      description: expect.stringMatching(/Development placeholder listing/i),
     }),
   );
 });

@@ -20,7 +20,6 @@ const push = vi.fn();
 const replace = vi.fn();
 const router = { push, replace };
 let currentParams = new URLSearchParams();
-const hadScrollIntoView = "scrollIntoView" in Element.prototype;
 
 const queriesOverride = vi.hoisted(() => ({ empty: false }));
 
@@ -63,9 +62,6 @@ beforeEach(() => {
 
 afterEach(() => {
   vi.restoreAllMocks();
-  if (!hadScrollIntoView) {
-    delete (Element.prototype as Partial<Element>).scrollIntoView;
-  }
 });
 
 test("property card provides details and inquiry click paths", () => {
@@ -294,7 +290,7 @@ test("listing applies q and price together", async () => {
   render(
     await PropertyListing({
       searchParams: Promise.resolve({
-        q: "family",
+        q: "livingston",
         type: "house",
         price: "150-300",
       }),
@@ -302,7 +298,7 @@ test("listing applies q and price together", async () => {
   );
 
   expect(screen.getAllByRole("article")).toHaveLength(1);
-  expect(screen.getByText(/placeholder family house/i)).toBeInTheDocument();
+  expect(screen.getByText(/modern home in livingston/i)).toBeInTheDocument();
 });
 
 test("listing shows no-match empty state", async () => {
@@ -317,65 +313,6 @@ test("listing shows no-match empty state", async () => {
   ).toBeInTheDocument();
 });
 
-test("placeholder map lists a pin control per filtered property", async () => {
-  render(
-    await PropertyListing({
-      searchParams: Promise.resolve({ type: "land" }),
-    }),
-  );
-
-  expect(
-    screen.getByRole("region", { name: /development placeholder map/i }),
-  ).toBeInTheDocument();
-  expect(
-    screen.getAllByRole("button", { name: /view .* on listing/i }).length,
-  ).toBe(2);
-});
-
-test("placeholder map pin scrolls to and focuses its card", async () => {
-  const user = userEvent.setup();
-  render(
-    await PropertyListing({
-      searchParams: Promise.resolve({ type: "land" }),
-    }),
-  );
-  if (!hadScrollIntoView) {
-    Object.defineProperty(Element.prototype, "scrollIntoView", {
-      configurable: true,
-      value: () => undefined,
-    });
-  }
-  const scrollIntoView = vi
-    .spyOn(Element.prototype, "scrollIntoView")
-    .mockImplementation(() => undefined);
-
-  const pin = screen.getAllByRole("button", { name: /view .* on listing/i })[0];
-  await user.click(pin);
-
-  const card = document.querySelector<HTMLElement>("[data-property-id]");
-  expect(card).not.toBeNull();
-  expect(card?.id).toBe(`property-${card?.dataset.propertyId}`);
-  expect(scrollIntoView).toHaveBeenCalledWith({
-    behavior: "smooth",
-    block: "center",
-  });
-  expect(card).toHaveFocus();
-});
-
-test("placeholder map stays visible with empty note when nothing matches", async () => {
-  render(
-    await PropertyListing({
-      searchParams: Promise.resolve({ q: "zzzz-no-match" }),
-    }),
-  );
-
-  expect(
-    screen.getByRole("region", { name: /development placeholder map/i }),
-  ).toBeInTheDocument();
-  expect(screen.getByText("No listings match.")).toBeInTheDocument();
-  expect(screen.queryAllByRole("button", { name: /view .* on listing/i })).toHaveLength(0);
-});
-
 test("listing shows empty inventory message when nothing is available and no filters are active", async () => {
   queriesOverride.empty = true;
 
@@ -388,5 +325,4 @@ test("listing shows empty inventory message when nothing is available and no fil
     screen.queryByText("No properties match your search."),
   ).not.toBeInTheDocument();
   expect(screen.queryAllByRole("article")).toHaveLength(0);
-  expect(screen.getByText("No listings match.")).toBeInTheDocument();
 });
