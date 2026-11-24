@@ -15,12 +15,10 @@ export function ServicesList({ services }: ServicesListProps) {
     <ul className={styles.servicesList}>
       {services.map((service) => (
         <li className={styles.service} key={service.id}>
+          <span className={styles.serviceCheck} aria-hidden="true">
+            ✓
+          </span>
           <span>{service.label}</span>
-          {service.awaitingOwnerApproval ? (
-            <span className={styles.approvalLabel}>
-              Awaiting owner approval
-            </span>
-          ) : null}
         </li>
       ))}
     </ul>

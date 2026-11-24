@@ -60,6 +60,7 @@ export const contactInputSchema = z.object({
   phone: optionalPhone,
   reason: z.enum(["sell", "property", "remodeling", "financing", "general"]),
   message,
+  propertyInterest: z.string().trim().max(200).optional().default(""),
   company,
 });
 

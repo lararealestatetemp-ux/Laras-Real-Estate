@@ -1,10 +1,12 @@
 import { Suspense } from "react";
 
 import { PropertyCard } from "@/components/property/PropertyCard";
-import { PropertyFilters } from "@/components/property/PropertyFilters";
+import { PropertyDiscoveryToolbar } from "@/components/property/PropertyDiscoveryToolbar";
 import { PageHero } from "@/components/ui/PageHero";
-import { filterPropertiesByType } from "@/lib/properties/queries";
-import type { PropertyType } from "@/lib/properties/types";
+import {
+  filterPropertiesByDiscovery,
+  parseDiscoveryFilters,
+} from "@/lib/properties/discovery";
 import { buildPageMetadata } from "@/lib/seo";
 import styles from "@/styles/property.module.css";
 
@@ -15,26 +17,19 @@ export const metadata = buildPageMetadata({
 });
 
 type PropertiesPageProps = {
-  searchParams: Promise<{ type?: string | string[] }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 };
-
-function parsePropertyType(value: string | string[] | undefined): PropertyType | "all" {
-  if (value === "house" || value === "land" || value === "commercial") {
-    return value;
-  }
-
-  return "all";
-}
 
 export async function PropertyListing({
   searchParams,
 }: PropertiesPageProps) {
   const params = await searchParams;
-  const properties = filterPropertiesByType(parsePropertyType(params.type));
+  const filters = parseDiscoveryFilters(params);
+  const properties = filterPropertiesByDiscovery(filters);
 
   return (
     <section className={styles.listing} aria-label="Property listings">
-      <PropertyFilters />
+      <PropertyDiscoveryToolbar />
       {properties.length > 0 ? (
         <div className={styles.grid}>
           {properties.map((property) => (
@@ -42,7 +37,15 @@ export async function PropertyListing({
           ))}
         </div>
       ) : (
-        <p className={styles.emptyState}>No properties available right now.</p>
+        <p className={styles.emptyState}>
+          {filters.q ||
+          filters.type !== "all" ||
+          filters.price ||
+          filters.beds ||
+          filters.baths
+            ? "No properties match your search."
+            : "No properties available right now."}
+        </p>
       )}
     </section>
   );

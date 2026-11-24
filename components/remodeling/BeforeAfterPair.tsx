@@ -10,22 +10,13 @@ type BeforeAfterPairProps = {
   after: PlaceholderImage;
 };
 
-const PLACEHOLDER_DISCLOSURE =
-  "Placeholder imagery — not completed Laras Real Estate projects";
-
-export function BeforeAfterPair({
-  before,
-  after,
-}: BeforeAfterPairProps) {
+export function BeforeAfterPair({ before, after }: BeforeAfterPairProps) {
   return (
     <figure className={styles.comparison}>
-      <figcaption className={styles.disclosure}>
-        {PLACEHOLDER_DISCLOSURE}
-      </figcaption>
       <div className={styles.imageGrid}>
         <div className={styles.imagePanel}>
           <span className={styles.imageLabel}>Before</span>
-          {/* The brief intentionally uses external placeholder imagery. */}
+          {/* Local stock images for layout preview. */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className={styles.comparisonImage}

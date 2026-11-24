@@ -1,6 +1,7 @@
 "use client";
 
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { REMODELING_SERVICE_PLACEHOLDERS } from "@/lib/remodeling/placeholders";
 import styles from "@/styles/forms.module.css";
 
 import { FormField } from "./FormField";
@@ -20,7 +21,7 @@ export function ConsultationForm() {
         <FormField
           id="consultation-first-name"
           name="firstName"
-          label="First name"
+          label="First Name"
           autoComplete="given-name"
           error={fieldErrors.firstName}
           required
@@ -28,38 +29,59 @@ export function ConsultationForm() {
         <FormField
           id="consultation-last-name"
           name="lastName"
-          label="Last name"
+          label="Last Name"
           autoComplete="family-name"
           error={fieldErrors.lastName}
           required
         />
-        <FormField
-          id="consultation-email"
-          name="email"
-          label="Email"
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          spellCheck={false}
-          error={fieldErrors.email}
-          required
-        />
-        <FormField
-          id="consultation-phone"
-          name="phone"
-          label="Phone"
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          error={fieldErrors.phone}
-          required
-        />
+      </div>
+      <FormField
+        id="consultation-phone"
+        name="phone"
+        label="Phone"
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel"
+        error={fieldErrors.phone}
+        required
+      />
+      <FormField
+        id="consultation-email"
+        name="email"
+        label="Email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        spellCheck={false}
+        error={fieldErrors.email}
+        required
+      />
+      <div className={styles.field}>
+        <label className={styles.label} htmlFor="consultation-project-type">
+          Project Type
+        </label>
+        <select
+          className={styles.control}
+          id="consultation-project-type"
+          name="projectType"
+          defaultValue=""
+        >
+          <option value="" disabled>
+            Select a service
+          </option>
+          {REMODELING_SERVICE_PLACEHOLDERS.map((service) => (
+            <option key={service.id} value={service.label}>
+              {service.label}
+            </option>
+          ))}
+        </select>
       </div>
       <FormTextarea
         id="consultation-message"
         name="message"
-        label="Tell us about your project"
-        rows={6}
+        label="Project Details"
+        placeholder="Describe your project..."
+        rows={5}
         error={fieldErrors.message}
         required
       />
@@ -69,7 +91,7 @@ export function ConsultationForm() {
           {status === "pending" ? (
             <span className={styles.spinner} aria-hidden="true" />
           ) : null}
-          Request Consultation
+          Request Consultation →
         </PrimaryButton>
         <FormStatus
           id={statusId}
