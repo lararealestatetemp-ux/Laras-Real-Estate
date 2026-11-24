@@ -82,6 +82,58 @@ test("property filters expose all categories and update the URL", async () => {
   expect(push).toHaveBeenCalledWith("/properties");
 });
 
+test("discovery toolbar exposes search and secondary filters", async () => {
+  render(
+    await PropertyListing({
+      searchParams: Promise.resolve({}),
+    }),
+  );
+
+  expect(
+    screen.getByRole("searchbox", { name: /search properties/i }),
+  ).toBeInTheDocument();
+  expect(screen.getByLabelText(/price/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/^beds$/i)).toBeInTheDocument();
+  expect(screen.getByLabelText(/^baths$/i)).toBeInTheDocument();
+  expect(screen.getByRole("button", { name: "Houses" })).toBeInTheDocument();
+});
+
+test("discovery toolbar updates URL for selects and preserves other params", async () => {
+  const user = userEvent.setup();
+  currentParams = new URLSearchParams("type=house&q=lot");
+  render(createElement(PropertyFilters));
+
+  await user.selectOptions(screen.getByLabelText(/^beds$/i), "3");
+  expect(push).toHaveBeenLastCalledWith("/properties?type=house&q=lot&beds=3");
+
+  await user.selectOptions(screen.getByLabelText(/^beds$/i), "");
+  expect(push).toHaveBeenLastCalledWith("/properties?type=house&q=lot");
+});
+
+test("discovery toolbar debounces search and offers keyboard autocomplete", async () => {
+  const user = userEvent.setup();
+  render(createElement(PropertyFilters));
+
+  const input = screen.getByRole("searchbox", { name: /search properties/i });
+  await user.type(input, "a");
+
+  const listbox = await screen.findByRole("listbox");
+  const options = screen.getAllByRole("option");
+  expect(listbox).toBeInTheDocument();
+  expect(options.length).toBeGreaterThan(0);
+  expect(input).toHaveAttribute("aria-controls", listbox.id);
+
+  await user.keyboard("{ArrowDown}");
+  expect(input).toHaveAttribute("aria-activedescendant", options[0].id);
+  await user.keyboard("{Enter}");
+  expect(push).toHaveBeenCalledWith(
+    `/properties?${new URLSearchParams({ q: options[0].textContent ?? "" })}`,
+  );
+
+  await user.type(input, "{Escape}");
+  expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+});
+
 test("properties page shows the hero and available cards", async () => {
   const props = {
     searchParams: Promise.resolve({ type: "house" }),

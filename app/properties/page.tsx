@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import { PropertyCard } from "@/components/property/PropertyCard";
-import { PropertyFilters } from "@/components/property/PropertyFilters";
+import { PropertyDiscoveryToolbar } from "@/components/property/PropertyDiscoveryToolbar";
 import { PageHero } from "@/components/ui/PageHero";
 import { filterPropertiesByType } from "@/lib/properties/queries";
 import type { PropertyType } from "@/lib/properties/types";
@@ -34,7 +34,7 @@ export async function PropertyListing({
 
   return (
     <section className={styles.listing} aria-label="Property listings">
-      <PropertyFilters />
+      <PropertyDiscoveryToolbar />
       {properties.length > 0 ? (
         <div className={styles.grid}>
           {properties.map((property) => (
