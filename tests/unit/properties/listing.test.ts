@@ -7,7 +7,6 @@ import { vi } from "vitest";
 import PropertiesPage, { PropertyListing } from "@/app/properties/page";
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { PropertyFilters } from "@/components/property/PropertyFilters";
-import * as propertyQueries from "@/lib/properties/queries";
 import type { Property } from "@/lib/properties/types";
 
 const push = vi.fn();
@@ -220,16 +219,29 @@ test("properties page shows the hero and available cards", async () => {
   ).not.toBeInTheDocument();
 });
 
-test("properties page shows the required empty state", async () => {
-  vi.spyOn(propertyQueries, "filterPropertiesByType").mockReturnValueOnce([]);
-
+test("listing applies q and price together", async () => {
   render(
     await PropertyListing({
-      searchParams: Promise.resolve({ type: "commercial" }),
+      searchParams: Promise.resolve({
+        q: "family",
+        type: "house",
+        price: "150-300",
+      }),
+    }),
+  );
+
+  expect(screen.getAllByRole("article")).toHaveLength(1);
+  expect(screen.getByText(/placeholder family house/i)).toBeInTheDocument();
+});
+
+test("listing shows no-match empty state", async () => {
+  render(
+    await PropertyListing({
+      searchParams: Promise.resolve({ q: "zzzz-no-match" }),
     }),
   );
 
   expect(
-    screen.getByText("No properties available right now."),
+    screen.getByText("No properties match your search."),
   ).toBeInTheDocument();
 });
