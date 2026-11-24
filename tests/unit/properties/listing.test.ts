@@ -11,6 +11,7 @@ import type { Property } from "@/lib/properties/types";
 
 const push = vi.fn();
 let currentParams = new URLSearchParams();
+const hadScrollIntoView = "scrollIntoView" in Element.prototype;
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/properties",
@@ -36,6 +37,13 @@ const property: Property = {
 beforeEach(() => {
   push.mockReset();
   currentParams = new URLSearchParams();
+});
+
+afterEach(() => {
+  vi.restoreAllMocks();
+  if (!hadScrollIntoView) {
+    delete (Element.prototype as Partial<Element>).scrollIntoView;
+  }
 });
 
 test("property card provides details and inquiry click paths", () => {
@@ -268,8 +276,15 @@ test("placeholder map pin scrolls to and focuses its card", async () => {
       searchParams: Promise.resolve({ type: "land" }),
     }),
   );
-  const scrollIntoView = vi.fn();
-  Element.prototype.scrollIntoView = scrollIntoView;
+  if (!hadScrollIntoView) {
+    Object.defineProperty(Element.prototype, "scrollIntoView", {
+      configurable: true,
+      value: () => undefined,
+    });
+  }
+  const scrollIntoView = vi
+    .spyOn(Element.prototype, "scrollIntoView")
+    .mockImplementation(() => undefined);
 
   const pin = screen.getAllByRole("button", { name: /view .* on listing/i })[0];
   await user.click(pin);
