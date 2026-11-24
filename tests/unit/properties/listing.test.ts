@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import "@testing-library/jest-dom/vitest";
-import { render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { vi } from "vitest";
 
@@ -110,7 +110,65 @@ test("discovery toolbar updates URL for selects and preserves other params", asy
   expect(push).toHaveBeenLastCalledWith("/properties?type=house&q=lot");
 });
 
-test("discovery toolbar debounces search and offers keyboard autocomplete", async () => {
+test("discovery toolbar debounces search by 300ms", () => {
+  vi.useFakeTimers();
+  try {
+    render(createElement(PropertyFilters));
+
+    // fireEvent avoids user-event's internal timers, which hang under fake timers.
+    const input = screen.getByRole("searchbox", { name: /search properties/i });
+    fireEvent.change(input, { target: { value: "lot" } });
+
+    expect(push).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(299);
+    });
+    expect(push).not.toHaveBeenCalled();
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(push).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith("/properties?q=lot");
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+test("discovery toolbar keeps typing when the URL echoes a committed query", async () => {
+  const user = userEvent.setup();
+  const view = render(createElement(PropertyFilters));
+
+  const input = screen.getByRole("searchbox", { name: /search properties/i });
+  await user.type(input, "a");
+  await waitFor(() => expect(push).toHaveBeenCalledWith("/properties?q=a"));
+
+  // User keeps typing while the pushed URL arrives.
+  await user.type(input, "b");
+  currentParams = new URLSearchParams("q=a");
+  view.rerender(createElement(PropertyFilters));
+
+  expect(input).toHaveValue("ab");
+
+  // A genuinely external navigation (back/forward) still syncs the field.
+  currentParams = new URLSearchParams("q=zzz");
+  view.rerender(createElement(PropertyFilters));
+  await waitFor(() => expect(input).toHaveValue("zzz"));
+});
+
+test("discovery toolbar preserves q=all as a search term", async () => {
+  const user = userEvent.setup();
+  render(createElement(PropertyFilters));
+
+  await user.type(
+    screen.getByRole("searchbox", { name: /search properties/i }),
+    "all{Enter}",
+  );
+  expect(push).toHaveBeenLastCalledWith("/properties?q=all");
+});
+
+test("discovery toolbar offers keyboard autocomplete and closes on Escape", async () => {
   const user = userEvent.setup();
   render(createElement(PropertyFilters));
 
@@ -129,8 +187,18 @@ test("discovery toolbar debounces search and offers keyboard autocomplete", asyn
   expect(push).toHaveBeenCalledWith(
     `/properties?${new URLSearchParams({ q: options[0].textContent ?? "" })}`,
   );
+  expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+});
 
-  await user.type(input, "{Escape}");
+test("discovery toolbar closes the listbox on Escape without selecting", async () => {
+  const user = userEvent.setup();
+  render(createElement(PropertyFilters));
+
+  const input = screen.getByRole("searchbox", { name: /search properties/i });
+  await user.type(input, "a");
+  expect(await screen.findByRole("listbox")).toBeInTheDocument();
+
+  await user.keyboard("{Escape}");
   expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 });
 

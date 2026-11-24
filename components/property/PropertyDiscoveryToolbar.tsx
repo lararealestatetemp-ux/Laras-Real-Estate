@@ -65,7 +65,9 @@ function withParam(
 ): URLSearchParams {
   const next = new URLSearchParams(current.toString());
 
-  if (value === "" || value === "all") {
+  const isDefault = value === "" || (key === "type" && value === "all");
+
+  if (isDefault) {
     next.delete(key);
   } else {
     next.set(key, value);
@@ -87,16 +89,23 @@ export function PropertyDiscoveryToolbar() {
   const activeType = isTypeFilter(requestedType) ? requestedType : "all";
 
   const [draftQ, setDraftQ] = useState(urlQuery);
-  const [syncedUrlQuery, setSyncedUrlQuery] = useState(urlQuery);
   const [isOpen, setIsOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(-1);
+  // The query this component last pushed (or received from the URL).
   const committedQuery = useRef(urlQuery.trim());
 
-  // Keep the field in step with the URL (e.g. back/forward navigation).
-  if (urlQuery !== syncedUrlQuery) {
-    setSyncedUrlQuery(urlQuery);
+  // Sync the field from the URL only for external navigation (e.g.
+  // back/forward). URL changes we pushed ourselves must not overwrite typing.
+  useEffect(() => {
+    const trimmed = urlQuery.trim();
+
+    if (trimmed === committedQuery.current) {
+      return;
+    }
+
+    committedQuery.current = trimmed;
     setDraftQ(urlQuery);
-  }
+  }, [urlQuery]);
 
   function navigate(params: URLSearchParams) {
     const query = params.toString();
@@ -108,10 +117,6 @@ export function PropertyDiscoveryToolbar() {
     committedQuery.current = trimmed;
     navigate(withParam(searchParams, "q", trimmed));
   }
-
-  useEffect(() => {
-    committedQuery.current = urlQuery.trim();
-  }, [urlQuery]);
 
   useEffect(() => {
     const trimmed = draftQ.trim();
