@@ -245,3 +245,55 @@ test("listing shows no-match empty state", async () => {
     screen.getByText("No properties match your search."),
   ).toBeInTheDocument();
 });
+
+test("placeholder map lists a pin control per filtered property", async () => {
+  render(
+    await PropertyListing({
+      searchParams: Promise.resolve({ type: "land" }),
+    }),
+  );
+
+  expect(
+    screen.getByRole("region", { name: /development placeholder map/i }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getAllByRole("button", { name: /view .* on listing/i }).length,
+  ).toBe(2);
+});
+
+test("placeholder map pin scrolls to and focuses its card", async () => {
+  const user = userEvent.setup();
+  render(
+    await PropertyListing({
+      searchParams: Promise.resolve({ type: "land" }),
+    }),
+  );
+  const scrollIntoView = vi.fn();
+  Element.prototype.scrollIntoView = scrollIntoView;
+
+  const pin = screen.getAllByRole("button", { name: /view .* on listing/i })[0];
+  await user.click(pin);
+
+  const card = document.querySelector<HTMLElement>("[data-property-id]");
+  expect(card).not.toBeNull();
+  expect(card?.id).toBe(`property-${card?.dataset.propertyId}`);
+  expect(scrollIntoView).toHaveBeenCalledWith({
+    behavior: "smooth",
+    block: "center",
+  });
+  expect(card).toHaveFocus();
+});
+
+test("placeholder map stays visible with empty note when nothing matches", async () => {
+  render(
+    await PropertyListing({
+      searchParams: Promise.resolve({ q: "zzzz-no-match" }),
+    }),
+  );
+
+  expect(
+    screen.getByRole("region", { name: /development placeholder map/i }),
+  ).toBeInTheDocument();
+  expect(screen.getByText("No listings match.")).toBeInTheDocument();
+  expect(screen.queryAllByRole("button", { name: /view .* on listing/i })).toHaveLength(0);
+});

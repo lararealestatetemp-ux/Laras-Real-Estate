@@ -2,6 +2,7 @@ import { Suspense } from "react";
 
 import { PropertyCard } from "@/components/property/PropertyCard";
 import { PropertyDiscoveryToolbar } from "@/components/property/PropertyDiscoveryToolbar";
+import { PropertyMapPlaceholder } from "@/components/property/PropertyMapPlaceholder";
 import { PageHero } from "@/components/ui/PageHero";
 import {
   filterPropertiesByDiscovery,
@@ -30,23 +31,26 @@ export async function PropertyListing({
   return (
     <section className={styles.listing} aria-label="Property listings">
       <PropertyDiscoveryToolbar />
-      {properties.length > 0 ? (
-        <div className={styles.grid}>
-          {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
-          ))}
-        </div>
-      ) : (
-        <p className={styles.emptyState}>
-          {filters.q ||
-          filters.type !== "all" ||
-          filters.price ||
-          filters.beds ||
-          filters.baths
-            ? "No properties match your search."
-            : "No properties available right now."}
-        </p>
-      )}
+      <div className={styles.discoveryLayout}>
+        {properties.length > 0 ? (
+          <div className={styles.grid}>
+            {properties.map((property) => (
+              <PropertyCard key={property.id} property={property} />
+            ))}
+          </div>
+        ) : (
+          <p className={styles.emptyState}>
+            {filters.q ||
+            filters.type !== "all" ||
+            filters.price ||
+            filters.beds ||
+            filters.baths
+              ? "No properties match your search."
+              : "No properties available right now."}
+          </p>
+        )}
+        <PropertyMapPlaceholder properties={properties} />
+      </div>
     </section>
   );
 }

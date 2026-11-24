@@ -17,7 +17,12 @@ export function PropertyCard({ property }: { property: Property }) {
   const image = property.images[0];
 
   return (
-    <article className={styles.card}>
+    <article
+      className={styles.card}
+      id={`property-${property.id}`}
+      data-property-id={property.id}
+      tabIndex={-1}
+    >
       {image ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
