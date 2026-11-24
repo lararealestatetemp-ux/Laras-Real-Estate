@@ -16,6 +16,8 @@ export default function ContactPage() {
       <PageHero
         title="Contact Laras Real Estate"
         description="Call us or send a message using the form."
+        imageSrc="/images/contact-hero-stock.jpg"
+        imageAlt="Development placeholder stock photo: residential home exterior"
       />
       <section className={`${styles.section} ${styles.twoColumn}`}>
         <div className={styles.copy}>

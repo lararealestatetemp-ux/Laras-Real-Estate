@@ -22,6 +22,8 @@ export default function RemodelingPage() {
       <PageHero
         title="Remodeling"
         description="Explore provisional service categories and request a consultation about the updates you are considering."
+        imageSrc="/images/remodeling-hero-stock.jpg"
+        imageAlt="Development placeholder stock photo: renovated interior living space"
       />
 
       <section className={styles.section} aria-labelledby="services-title">

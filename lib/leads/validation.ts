@@ -29,7 +29,7 @@ export const sellerInputSchema = z.object({
   propertyAddress: z.string().trim().min(1).max(200),
   propertyType: z.enum(["house", "land", "commercial"]),
   askingPrice: z.string().trim().min(1).max(40),
-  generalInfo: z.string().trim().min(1).max(2000),
+  generalInfo: z.string().trim().max(2000),
   comments: z.string().trim().max(2000),
   company,
 });

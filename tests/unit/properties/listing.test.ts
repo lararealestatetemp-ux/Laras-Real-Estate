@@ -94,7 +94,7 @@ test("properties page shows the hero and available cards", async () => {
   page.unmount();
 
   render(await PropertyListing(props));
-  expect(screen.getAllByRole("article")).toHaveLength(1);
+  expect(screen.getAllByRole("article")).toHaveLength(3);
   expect(
     screen.queryByText("No properties available right now."),
   ).not.toBeInTheDocument();

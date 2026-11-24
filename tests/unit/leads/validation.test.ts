@@ -40,6 +40,12 @@ test("accepts valid seller payload", () => {
   expect(validateSellerInput(sellerPayload).success).toBe(true);
 });
 
+test("accepts seller payload without general information", () => {
+  expect(
+    validateSellerInput({ ...sellerPayload, generalInfo: "" }).success,
+  ).toBe(true);
+});
+
 test("property inquiry requires a safe property slug", () => {
   const result = validatePropertyInquiryInput({
     firstName: "Ada",

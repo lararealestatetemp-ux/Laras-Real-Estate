@@ -16,6 +16,8 @@ export default function FinancingPage() {
       <PageHero
         title="Financing"
         description="Ask about financing that may be available for a property or project you are considering."
+        imageSrc="/images/financing-hero-stock.jpg"
+        imageAlt="Development placeholder stock photo: residential home exterior"
       />
       <section
         className={`${styles.section} ${styles.twoColumn}`}

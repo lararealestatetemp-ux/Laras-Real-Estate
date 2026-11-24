@@ -54,6 +54,8 @@ export default function PropertiesPage(props: PropertiesPageProps) {
       <PageHero
         title="Properties for Sale"
         description="Browse available houses, land, and commercial properties."
+        imageSrc="/images/properties-hero-stock.jpg"
+        imageAlt="Development placeholder stock photo: lighted residential home exterior"
       />
       <Suspense
         fallback={

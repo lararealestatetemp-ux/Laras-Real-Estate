@@ -92,15 +92,14 @@ export function SellerForm() {
         id="seller-general-info"
         name="generalInfo"
         label="General information about the property"
-        rows={5}
+        rows={3}
         error={fieldErrors.generalInfo}
-        required
       />
       <FormTextarea
         id="seller-comments"
         name="comments"
         label="Additional comments"
-        rows={4}
+        rows={3}
         error={fieldErrors.comments}
       />
       <Honeypot id="seller-company" />

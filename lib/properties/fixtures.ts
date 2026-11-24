@@ -14,8 +14,8 @@ export const properties: Property[] = [
     ownerFinancingAvailable: true,
     images: [
       {
-        src: "https://picsum.photos/seed/placeholder-house-1/1200/800",
-        alt: "Placeholder image for a sample family house",
+        src: "/images/properties/placeholder-family-house.jpg",
+        alt: "Development placeholder stock photo: sample family house exterior",
       },
     ],
     bedrooms: 3,
@@ -23,6 +23,54 @@ export const properties: Property[] = [
     squareFootage: 1_850,
     lotSize: "0.24 acres",
     features: ["Covered patio", "Attached garage", "Fenced yard"],
+    isDevelopmentPlaceholder: true,
+  },
+  {
+    id: "placeholder-house-2",
+    slug: "placeholder-ranch-home",
+    title: "Placeholder Ranch Home",
+    propertyType: "house",
+    price: 319_000,
+    location: "Sample Suburban Area",
+    description:
+      "Development-only ranch-style house listing used to preview the property experience.",
+    status: "available",
+    ownerFinancingAvailable: true,
+    images: [
+      {
+        src: "/images/properties/placeholder-ranch-home.jpg",
+        alt: "Development placeholder stock photo: sample ranch home exterior",
+      },
+    ],
+    bedrooms: 4,
+    bathrooms: 2,
+    squareFootage: 2_100,
+    lotSize: "0.31 acres",
+    features: ["Single story", "Large driveway", "Mature trees"],
+    isDevelopmentPlaceholder: true,
+  },
+  {
+    id: "placeholder-house-3",
+    slug: "placeholder-brick-home",
+    title: "Placeholder Brick Home",
+    propertyType: "house",
+    price: 349_000,
+    location: "Sample Residential Street",
+    description:
+      "Development-only brick house listing used to preview the property experience.",
+    status: "available",
+    ownerFinancingAvailable: false,
+    images: [
+      {
+        src: "/images/properties/placeholder-brick-home.jpg",
+        alt: "Development placeholder stock photo: sample brick home exterior",
+      },
+    ],
+    bedrooms: 3,
+    bathrooms: 2.5,
+    squareFootage: 2_050,
+    lotSize: "0.28 acres",
+    features: ["Brick exterior", "Front porch", "Updated kitchen"],
     isDevelopmentPlaceholder: true,
   },
   {
@@ -38,12 +86,33 @@ export const properties: Property[] = [
     ownerFinancingAvailable: false,
     images: [
       {
-        src: "https://picsum.photos/seed/placeholder-land-1/1200/800",
-        alt: "Placeholder image for sample residential land",
+        src: "/images/properties/placeholder-residential-land.jpg",
+        alt: "Development placeholder stock photo: sample residential land",
       },
     ],
     lotSize: "2.5 acres",
     features: ["Road access", "Surveyed boundaries", "Open terrain"],
+    isDevelopmentPlaceholder: true,
+  },
+  {
+    id: "placeholder-land-2",
+    slug: "placeholder-acreage-land",
+    title: "Placeholder Acreage Land",
+    propertyType: "land",
+    price: 160_000,
+    location: "Sample Countryside",
+    description:
+      "Development-only acreage listing used to preview larger vacant property details.",
+    status: "available",
+    ownerFinancingAvailable: true,
+    images: [
+      {
+        src: "/images/properties/placeholder-acreage-land.jpg",
+        alt: "Development placeholder stock photo: sample acreage land",
+      },
+    ],
+    lotSize: "5 acres",
+    features: ["Open pasture", "County road frontage", "Utilities nearby"],
     isDevelopmentPlaceholder: true,
   },
   {
@@ -59,8 +128,8 @@ export const properties: Property[] = [
     ownerFinancingAvailable: false,
     images: [
       {
-        src: "https://picsum.photos/seed/placeholder-commercial-1/1200/800",
-        alt: "Placeholder image for a sample commercial space",
+        src: "/images/properties/placeholder-commercial-space.jpg",
+        alt: "Development placeholder stock photo: sample commercial building",
       },
     ],
     bathrooms: 2,
@@ -81,8 +150,8 @@ export const properties: Property[] = [
     ownerFinancingAvailable: false,
     images: [
       {
-        src: "https://picsum.photos/seed/placeholder-house-unavailable/1200/800",
-        alt: "Placeholder image for an unavailable sample house",
+        src: "/images/properties/placeholder-unavailable-house.jpg",
+        alt: "Development placeholder stock photo: unavailable sample house",
       },
     ],
     bedrooms: 2,

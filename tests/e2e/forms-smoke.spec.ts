@@ -18,7 +18,6 @@ test("empty seller form shows accessible validation errors", async ({ page }) =>
     "seller-property-address",
     "seller-property-type",
     "seller-asking-price",
-    "seller-general-info",
   ]) {
     const field = page.locator(`#${id}`);
     await expect(field).toHaveAttribute("aria-invalid", "true");

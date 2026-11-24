@@ -3,20 +3,28 @@ import Link from "next/link";
 
 import styles from "@/styles/buttons.module.css";
 
+type SharedProps = {
+  children: ReactNode;
+  className?: string;
+};
+
 type Props =
-  | { href: string; children: ReactNode }
-  | {
+  | (SharedProps & { href: string })
+  | (SharedProps & {
       href?: never;
-      children: ReactNode;
       type?: "button" | "submit";
       disabled?: boolean;
       onClick?: () => void;
-    };
+    });
+
+function secondaryClassName(className?: string) {
+  return className ? `${styles.secondary} ${className}` : styles.secondary;
+}
 
 export function SecondaryButton(props: Props) {
   if ("href" in props && props.href) {
     return (
-      <Link className={styles.secondary} href={props.href}>
+      <Link className={secondaryClassName(props.className)} href={props.href}>
         {props.children}
       </Link>
     );
@@ -26,7 +34,7 @@ export function SecondaryButton(props: Props) {
 
   return (
     <button
-      className={styles.secondary}
+      className={secondaryClassName(buttonProps.className)}
       type={buttonProps.type ?? "button"}
       disabled={buttonProps.disabled}
       onClick={buttonProps.onClick}

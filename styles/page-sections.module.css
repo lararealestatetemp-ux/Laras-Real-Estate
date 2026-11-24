@@ -4,6 +4,79 @@
   padding-block: var(--space-6);
 }
 
+.mediaHero {
+  position: relative;
+  display: grid;
+  align-items: end;
+  min-height: min(52vh, 28rem);
+  color: var(--color-white);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.mediaHeroMedia,
+.mediaHeroScrim,
+.mediaHeroImage {
+  position: absolute;
+  inset: 0;
+}
+
+.mediaHeroMedia {
+  z-index: 0;
+}
+
+.mediaHeroImage {
+  object-fit: cover;
+  object-position: center;
+}
+
+.mediaHeroScrim {
+  z-index: 1;
+  background:
+    linear-gradient(
+      90deg,
+      rgb(12 35 64 / 0.78) 0%,
+      rgb(12 35 64 / 0.48) 42%,
+      rgb(12 35 64 / 0.14) 72%,
+      transparent 100%
+    ),
+    linear-gradient(
+      180deg,
+      rgb(12 35 64 / 0.18) 0%,
+      transparent 40%,
+      rgb(12 35 64 / 0.3) 100%
+    );
+}
+
+.mediaHeroInner {
+  position: relative;
+  z-index: 2;
+  width: min(calc(100% - (var(--space-3) * 2)), var(--max-width));
+  margin-inline: auto;
+  padding-block: var(--space-7);
+}
+
+.mediaHeroCopy {
+  max-width: calc(var(--space-7) * 10);
+}
+
+.mediaHero h1 {
+  margin: 0 0 var(--space-3);
+  color: var(--color-white);
+  font-size: clamp(var(--space-5), 4vw, calc(var(--space-6) + var(--space-2)));
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+.mediaHero p {
+  margin: 0;
+  max-width: calc(var(--space-7) * 9);
+  color: var(--color-white);
+  font-size: calc(var(--space-3) + var(--space-1));
+  line-height: 1.5;
+  text-wrap: pretty;
+}
+
 .twoColumn {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
@@ -26,12 +99,107 @@
   margin-top: var(--space-2);
 }
 
+.sellHero,
+.innerPageHero {
+  min-height: min(28vh, 15rem);
+}
+
+.sellColumns {
+  width: min(calc(100% - (var(--space-3) * 2)), 78rem);
+  /* Keep form ≥ ~28rem so name/email stay 2-col; otherwise the form
+     stacks, grows taller, and the highlight gaps look empty. */
+  grid-template-columns: minmax(0, 1.25fr) minmax(28rem, 1fr);
+  gap: clamp(var(--space-5), 4vw, var(--space-7));
+  align-items: stretch;
+  padding-block: var(--space-4) var(--space-7);
+}
+
+.sellHighlights {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  height: 100%;
+  min-height: 100%;
+  padding: calc(var(--space-7) + var(--space-5)) 0 0;
+}
+
+.highlightList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.highlightItem {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: var(--space-5);
+  align-items: center;
+}
+
+.highlightIcon {
+  display: grid;
+  place-items: center;
+  width: 5.5rem;
+  height: 5.5rem;
+  color: var(--color-gold);
+  line-height: 0;
+}
+
+.highlightIcon svg {
+  display: block;
+  width: 4.75rem;
+  height: 4.75rem;
+}
+
+.highlightTitle {
+  margin: 0;
+  color: var(--color-navy);
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.highlightDescription {
+  margin: 0.4rem 0 0;
+  color: color-mix(in srgb, var(--color-navy) 68%, var(--color-white));
+  font-size: clamp(1.125rem, 1.5vw, 1.35rem);
+  line-height: 1.35;
+}
+
+.sellHighlights > p {
+  margin: auto 0 0;
+  font-size: 1.125rem;
+}
+
 .formPanel {
+  height: 100%;
   padding: var(--space-5);
   background: var(--color-neutral);
   border: 1px solid var(--color-gold);
   border-radius: var(--space-1);
   scroll-margin-top: var(--space-6);
+}
+
+.sellColumns .formPanel {
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-4);
+}
+
+.sellColumns .formPanel form {
+  gap: var(--space-3);
+}
+
+.sellColumns .formPanel input,
+.sellColumns .formPanel select {
+  min-height: 2.5rem;
+}
+
+.sellColumns .formPanel textarea {
+  min-height: 4.5rem;
 }
 
 .formPanel h2 {
@@ -44,9 +212,61 @@
 }
 
 @media (max-width: 48rem) {
-  .twoColumn {
+  .mediaHero {
+    min-height: min(48vh, 22rem);
+    align-items: center;
+  }
+
+  .mediaHeroInner {
+    padding-block: var(--space-6);
+  }
+
+  .mediaHeroScrim {
+    background: linear-gradient(
+      180deg,
+      rgb(12 35 64 / 0.45) 0%,
+      rgb(12 35 64 / 0.72) 48%,
+      rgb(12 35 64 / 0.88) 100%
+    );
+  }
+
+  .twoColumn,
+  .sellColumns {
     grid-template-columns: 1fr;
     gap: var(--space-4);
+  }
+
+  .sellColumns {
+    padding-block: var(--space-5) var(--space-6);
+  }
+
+  .sellHighlights {
+    height: auto;
+    min-height: 0;
+    padding-top: 0;
+  }
+
+  .sellHighlights > p {
+    margin-top: var(--space-5);
+  }
+
+  .highlightList {
+    gap: var(--space-4);
+  }
+
+  .highlightItem {
+    grid-template-columns: 4.25rem minmax(0, 1fr);
+    gap: var(--space-4);
+  }
+
+  .highlightIcon {
+    width: 4.25rem;
+    height: 4.25rem;
+  }
+
+  .highlightIcon svg {
+    width: 3.5rem;
+    height: 3.5rem;
   }
 
   .formPanel {

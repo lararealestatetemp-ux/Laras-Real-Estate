@@ -14,15 +14,25 @@ test("home presents the approved sections and destinations", () => {
     screen.getByText("Love Your Location. Reimagine Your Home."),
   ).toBeVisible();
   expect(
-    screen.getByText("Real solutions for buyers, sellers, and investors."),
+    screen.getByText(
+      "Real Solutions for Buyers, Sellers, and Better Living.",
+    ),
   ).toBeVisible();
+  expect(
+    screen.getByRole("img", {
+      name: "Development placeholder stock photo: modern home exterior at twilight",
+    }),
+  ).toBeInTheDocument();
 
   const expectedLinks = [
-    ["Sell Your Property", "/sell"],
-    ["View Available Properties", "/properties"],
-    ["Explore Remodeling", "/remodeling"],
-    ["Learn About Financing", "/financing"],
-    ["Request a Remodeling Consultation", "/remodeling"],
+    ["Sell Your Property →", "/sell"],
+    ["View Available Properties →", "/properties"],
+    ["Get Started →", "/sell"],
+    ["View Properties →", "/properties"],
+    ["Learn More →", "/remodeling"],
+    ["Explore Financing →", "/financing"],
+    ["Contact Us →", "/contact"],
+    ["View More Projects →", "/remodeling"],
     ["Contact Laras Real Estate", "/contact"],
   ] as const;
 
@@ -41,4 +51,27 @@ test("home presents the approved sections and destinations", () => {
   expect(
     screen.getByRole("heading", { level: 2, name: "Building Better Opportunities" }),
   ).toBeVisible();
+  expect(screen.getByText("About Us")).toBeVisible();
+  expect(screen.getByText("Local Expertise")).toBeVisible();
+  expect(screen.getByText("Trusted & Reliable")).toBeVisible();
+  expect(screen.getByText("Community Focused")).toBeVisible();
+  expect(
+    screen.getByRole("img", {
+      name: "Development placeholder stock photo: modern kitchen interior",
+    }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("heading", { level: 2, name: "Before & After" }),
+  ).toBeVisible();
+  expect(screen.getByText("Our Work")).toBeVisible();
+  expect(
+    screen.getByRole("img", {
+      name: "Development placeholder: kitchen before remodel of the same property",
+    }),
+  ).toBeInTheDocument();
+  expect(
+    screen.getByRole("img", {
+      name: "Development placeholder: kitchen after remodel of the same property",
+    }),
+  ).toBeInTheDocument();
 });

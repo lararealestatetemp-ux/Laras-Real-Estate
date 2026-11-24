@@ -9,7 +9,7 @@ describe("property queries", () => {
   test("returns every fixture", () => {
     const items = getAllProperties();
 
-    expect(items).toHaveLength(4);
+    expect(items).toHaveLength(7);
     expect(items.some((property) => property.status === "unavailable")).toBe(
       true,
     );
@@ -18,7 +18,7 @@ describe("property queries", () => {
   test("returns available properties only by default listing helper", () => {
     const items = getAvailableProperties();
 
-    expect(items.length).toBeGreaterThan(0);
+    expect(items).toHaveLength(6);
     expect(items.every((property) => property.status === "available")).toBe(
       true,
     );
@@ -66,7 +66,7 @@ describe("property queries", () => {
     );
   });
 
-  test("marks fixtures as development placeholders with seeded mock images", () => {
+  test("marks fixtures as development placeholders with local stock images", () => {
     const items = getAllProperties();
 
     expect(
@@ -75,7 +75,7 @@ describe("property queries", () => {
           property.isDevelopmentPlaceholder === true &&
           property.images.length > 0 &&
           property.images.every((image) =>
-            /^https:\/\/picsum\.photos\/seed\/[^/]+\/1200\/800$/.test(
+            /^\/images\/properties\/placeholder-[a-z0-9-]+\.jpg$/.test(
               image.src,
             ),
           ),
