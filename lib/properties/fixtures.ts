@@ -23,6 +23,7 @@ export const properties: Property[] = [
     squareFootage: 1_850,
     lotSize: "0.24 acres",
     features: ["Covered patio", "Attached garage", "Fenced yard"],
+    mapPin: { x: 22, y: 30 },
     isDevelopmentPlaceholder: true,
   },
   {
@@ -47,6 +48,7 @@ export const properties: Property[] = [
     squareFootage: 2_100,
     lotSize: "0.31 acres",
     features: ["Single story", "Large driveway", "Mature trees"],
+    mapPin: { x: 48, y: 28 },
     isDevelopmentPlaceholder: true,
   },
   {
@@ -71,6 +73,7 @@ export const properties: Property[] = [
     squareFootage: 2_050,
     lotSize: "0.28 acres",
     features: ["Brick exterior", "Front porch", "Updated kitchen"],
+    mapPin: { x: 72, y: 35 },
     isDevelopmentPlaceholder: true,
   },
   {
@@ -92,6 +95,7 @@ export const properties: Property[] = [
     ],
     lotSize: "2.5 acres",
     features: ["Road access", "Surveyed boundaries", "Open terrain"],
+    mapPin: { x: 30, y: 62 },
     isDevelopmentPlaceholder: true,
   },
   {
@@ -113,6 +117,7 @@ export const properties: Property[] = [
     ],
     lotSize: "5 acres",
     features: ["Open pasture", "County road frontage", "Utilities nearby"],
+    mapPin: { x: 58, y: 68 },
     isDevelopmentPlaceholder: true,
   },
   {
@@ -135,6 +140,7 @@ export const properties: Property[] = [
     bathrooms: 2,
     squareFootage: 3_200,
     features: ["Storefront", "Parking area", "Storage room"],
+    mapPin: { x: 78, y: 55 },
     isDevelopmentPlaceholder: true,
   },
   {
