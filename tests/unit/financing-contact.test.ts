@@ -66,16 +66,28 @@ test("financing inquiry posts to the contact lead route with a locked reason", a
   fetchMock.mockRestore();
 });
 
-test("contact page presents only the phone contact path and form", () => {
-  const { container } = render(createElement(ContactPage));
+test("contact page shows filler contact details and message form", () => {
+  render(createElement(ContactPage));
 
   expect(screen.getByRole("link", { name: BUSINESS_PHONE })).toHaveAttribute(
     "href",
     expect.stringMatching(/^tel:/),
   );
+  expect(screen.getByRole("link", { name: "Email Us" })).toHaveAttribute(
+    "href",
+    "mailto:info@example.com",
+  );
   expect(
-    screen.getByRole("heading", { level: 2, name: "Send a message" }),
+    screen.getByRole("link", { name: "Follow Us on Facebook" }),
   ).toBeVisible();
-  expect(container.querySelector('a[href^="mailto:"]')).not.toBeInTheDocument();
-  expect(screen.queryByText(/map|hours|facebook/i)).not.toBeInTheDocument();
+  expect(screen.getByText("Business Hours")).toBeVisible();
+  expect(
+    screen.getByRole("region", { name: /development placeholder map/i }),
+  ).toBeVisible();
+  expect(
+    screen.getByRole("heading", { level: 2, name: "Send Us a Message" }),
+  ).toBeVisible();
+  expect(
+    screen.getByRole("button", { name: "Send Message →" }),
+  ).toBeVisible();
 });

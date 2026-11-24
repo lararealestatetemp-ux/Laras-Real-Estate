@@ -4,7 +4,6 @@ import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import styles from "@/styles/forms.module.css";
 
 import { FormField } from "./FormField";
-import { FormSelect } from "./FormSelect";
 import { FormStatus } from "./FormStatus";
 import { FormTextarea } from "./FormTextarea";
 import { Honeypot } from "./Honeypot";
@@ -20,7 +19,7 @@ export function ContactForm() {
         <FormField
           id="contact-first-name"
           name="firstName"
-          label="First name"
+          label="First Name"
           autoComplete="given-name"
           error={fieldErrors.firstName}
           required
@@ -28,61 +27,49 @@ export function ContactForm() {
         <FormField
           id="contact-last-name"
           name="lastName"
-          label="Last name"
+          label="Last Name"
           autoComplete="family-name"
           error={fieldErrors.lastName}
           required
         />
-        <FormField
-          id="contact-email"
-          name="email"
-          label="Email"
-          type="email"
-          inputMode="email"
-          autoComplete="email"
-          spellCheck={false}
-          error={fieldErrors.email}
-          required
-        />
-        <FormField
-          id="contact-phone"
-          name="phone"
-          label="Phone"
-          type="tel"
-          inputMode="tel"
-          autoComplete="tel"
-          error={fieldErrors.phone}
-        />
       </div>
-      <FormSelect
-        id="contact-reason"
-        name="reason"
-        label="Reason for contacting us"
-        defaultValue="general"
-        error={fieldErrors.reason}
+      <FormField
+        id="contact-email"
+        name="email"
+        label="Email"
+        type="email"
+        inputMode="email"
+        autoComplete="email"
+        spellCheck={false}
+        error={fieldErrors.email}
         required
-      >
-        <option value="sell">Sell my property</option>
-        <option value="property">Question about a property</option>
-        <option value="remodeling">Remodeling</option>
-        <option value="financing">Financing</option>
-        <option value="general">General question</option>
-      </FormSelect>
+      />
+      <FormField
+        id="contact-phone"
+        name="phone"
+        label="Phone"
+        type="tel"
+        inputMode="tel"
+        autoComplete="tel"
+        error={fieldErrors.phone}
+      />
       <FormTextarea
         id="contact-message"
         name="message"
         label="Message"
+        placeholder="How can we help you?"
         rows={6}
         error={fieldErrors.message}
         required
       />
       <Honeypot id="contact-company" />
+      <input name="reason" type="hidden" value="general" readOnly />
       <div className={styles.submitRow}>
         <PrimaryButton type="submit" disabled={status === "pending"}>
           {status === "pending" ? (
             <span className={styles.spinner} aria-hidden="true" />
           ) : null}
-          Send Message
+          Send Message →
         </PrimaryButton>
         <FormStatus
           id={statusId}

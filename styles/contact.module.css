@@ -1,0 +1,199 @@
+.section {
+  width: min(calc(100% - (var(--space-3) * 2)), var(--max-width));
+  margin-inline: auto;
+  padding-block: var(--space-6) var(--space-7);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(18rem, 1.05fr);
+  gap: var(--space-6);
+  align-items: start;
+}
+
+.sidebar {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.contactList {
+  display: grid;
+  gap: var(--space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.contactItem {
+  display: grid;
+  grid-template-columns: 2.75rem minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: start;
+}
+
+.contactIcon {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: var(--color-gold);
+  line-height: 0;
+}
+
+.contactIcon svg {
+  display: block;
+  width: 2rem;
+  height: 2rem;
+}
+
+.contactLink,
+.contactLabel {
+  margin: 0;
+  color: var(--color-navy);
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1.3;
+  text-decoration: none;
+}
+
+.contactLink:hover {
+  color: var(--color-gold);
+}
+
+.hoursBlock {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.hoursTitle {
+  margin: 0;
+  color: var(--color-navy);
+  font-size: 1.125rem;
+  font-weight: 700;
+}
+
+.hoursList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: var(--color-navy);
+  font-size: 1rem;
+  line-height: 1.45;
+}
+
+.fillerNote {
+  margin: 0;
+  color: var(--color-navy);
+  font-size: 0.875rem;
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.mapPanel {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.mapNote {
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  color: var(--color-navy);
+  font-weight: 700;
+  background: var(--color-neutral);
+  border-left: var(--space-1) solid var(--color-gold);
+}
+
+.mapSurface {
+  position: relative;
+  min-height: 14rem;
+  overflow: hidden;
+  background: var(--color-neutral);
+  border: 1px solid var(--color-gold);
+  border-radius: var(--space-1);
+}
+
+.mapSurface::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 23px,
+      var(--color-navy) 24px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 23px,
+      var(--color-navy) 24px
+    );
+  opacity: 0.08;
+}
+
+.mapPin {
+  position: absolute;
+  top: 48%;
+  left: 52%;
+  width: 1.25rem;
+  height: 1.25rem;
+  background: var(--color-gold);
+  border: 2px solid var(--color-navy);
+  border-radius: 50% 50% 50% 0;
+  transform: translate(-50%, -100%) rotate(-45deg);
+}
+
+.mapFooter {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.mapLocation {
+  margin: 0;
+  color: var(--color-navy);
+  font-weight: 700;
+}
+
+.mapDirections {
+  color: var(--color-navy);
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+  pointer-events: none;
+}
+
+.formPanel {
+  padding: var(--space-5);
+  background: var(--color-neutral);
+  border: 1px solid var(--color-gold);
+  border-radius: var(--space-1);
+  scroll-margin-top: var(--space-6);
+}
+
+.formIntro h2 {
+  margin: 0 0 var(--space-2);
+  color: var(--color-navy);
+  font-size: clamp(1.5rem, 2.5vw, 1.875rem);
+}
+
+.formIntro p {
+  margin: 0 0 var(--space-4);
+  color: var(--color-navy);
+}
+
+@media (max-width: 48rem) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+
+  .formPanel {
+    padding: var(--space-4);
+  }
+}

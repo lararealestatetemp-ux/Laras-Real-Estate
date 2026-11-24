@@ -185,13 +185,24 @@
 
 .footerInner {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1.1fr);
   gap: var(--space-5);
+  align-items: start;
+}
+
+.footerNav,
+.footerContact {
+  padding-left: var(--space-5);
+  border-left: 1px solid rgb(255 255 255 / 0.28);
 }
 
 .footerBrand,
 .footer a {
   color: var(--color-white);
+}
+
+.footer a:hover {
+  color: var(--color-gold);
 }
 
 .footer a:focus-visible {
@@ -206,18 +217,58 @@
   font-weight: 700;
 }
 
-.tagline,
-.footerHeading {
-  margin-top: 0;
+.tagline {
+  margin: 0 0 var(--space-4);
+  max-width: 22rem;
+  color: rgb(255 255 255 / 0.85);
+  line-height: 1.45;
+}
+
+.footerCopyright {
+  margin: 0;
+  color: rgb(255 255 255 / 0.7);
+  font-size: 0.875rem;
 }
 
 .footerHeading {
+  margin: 0 0 var(--space-3);
+  color: var(--color-white);
   font-size: 1rem;
+  font-weight: 700;
 }
 
 .footerLinks {
   display: grid;
   gap: var(--space-2);
+  margin: 0;
+}
+
+.footerLinks a {
+  text-decoration: none;
+}
+
+.footerContactList {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.footerContactList li {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.footerContactList a {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footerContactIcon {
+  flex-shrink: 0;
+  color: var(--color-gold);
 }
 
 @media (max-width: 56rem) {
@@ -251,8 +302,17 @@
   }
 }
 
-@media (max-width: 40rem) {
+@media (max-width: 48rem) {
   .footerInner {
     grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .footerNav,
+  .footerContact {
+    padding-left: 0;
+    padding-top: var(--space-4);
+    border-left: 0;
+    border-top: 1px solid rgb(255 255 255 / 0.28);
   }
 }
